@@ -17,19 +17,26 @@ class NESJoystick extends Joystick {
 
   public NESJoystick(PApplet sketch) {
 
+	println("Starting joystick/gamepad setup...");
+
     //seek out gamepad controlls 
     controll = ControllIO.getInstance(sketch);  
 
     for (int i=0; i < controll.getNumberOfDevices(); i++) {
-      device = controll.getDevice(i);
+		device = controll.getDevice(i);
+
       if (device.getName().equals("RetroPad")) {
         i = controll.getNumberOfDevices();  // found it, break loop
-        print(device.getName());
+        //print(device.getName());
+	    // assign buttons
+		println("Assigning buttons");
+    	assignButtons(device);
       }
     }
 
-    // assign buttons
-    assignButtons(device);
+	println("Done with joystick/gamepad setup.");
+
+
   }
 
   void assignButtons(ControllDevice dev) {

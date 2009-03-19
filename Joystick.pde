@@ -21,6 +21,15 @@ class Joystick {
   float getTotalX() {
     return stick.getTotalX();
   }
+
+	float getX() {
+		return stick.getX();
+	}
+
+	float getY() {
+		return stick.getY();
+	}
+
   
 }
 
