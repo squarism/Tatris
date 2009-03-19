@@ -1,4 +1,4 @@
-class LPiece extends Piece implements Cloneable {
+class LPiece extends Piece {
 	
 	/*
 			3   #
@@ -30,14 +30,6 @@ class LPiece extends Piece implements Cloneable {
 		super.round(blocks[1]);
 		super.round(blocks[3]);
 	}
-	
-	public Object clone() {  
-		try {  
-			return super.clone();  
-		} catch (Exception e) {  
-			return null;  
-		}  	
-	}
 			
 	public void setRotation(float angle) {
 		this.rotation = angle;
@@ -52,7 +44,7 @@ class LPiece extends Piece implements Cloneable {
 		// are we more right?
 		if (super.pivotPoint.getX() > wallWidth / 2) {
 			if (super.pivotPoint.getX() + blockSize * 3 < wallWidth) {
-				println("nowhere close near east wall");
+				//println("nowhere close near east wall");
 				return false;
 			} else {
 				float tmpRotation = rotation + 90.0f;
@@ -64,29 +56,29 @@ class LPiece extends Piece implements Cloneable {
 				tmpOffsetX[3] = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
 
 				if (super.pivotPoint.getX()+tmpOffsetX[0] >= wallWidth) {
-					println("denied 0");
+					//println("denied 0");
 					return true;
 				} 
 				if (super.pivotPoint.getX()+tmpOffsetX[1] >= wallWidth) {
-					println("denied 1");
+					//println("denied 1");
 					return true;
 				} 
 				if (super.pivotPoint.getX()+tmpOffsetX[2] >= wallWidth) {
-					println("denied 2");
+					//println("denied 2");
 					return true;
 				} 
 				if (super.pivotPoint.getX()+tmpOffsetX[3] >= wallWidth) {
-					println("denied 3");
+					//println("denied 3");
 					return true;
 				}
-				println("allowed west");
+				//println("allowed west");
 				return false;
 			}
 			
 		// or are we more left?
 		} else {
 			if (super.pivotPoint.getX() - blockSize * 2 > wallStart) {
-				println("nowhere close near west wall");
+				//println("nowhere close near west wall");
 				return false;
 			} else {
 				float tmpRotation = rotation + 90.0f;
@@ -97,22 +89,22 @@ class LPiece extends Piece implements Cloneable {
 				tmpOffsetX[2] = sin(tmpRotation + radians(270)) * blockSize;
 				tmpOffsetX[3] = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
 				if (super.pivotPoint.getX()+tmpOffsetX[0] < wallStart - blockSize/2) {
-					println("denied 0");
+					//println("denied 0");
 					return true;
 				} 
 				if (super.pivotPoint.getX()+tmpOffsetX[1] < wallStart - blockSize/2) {
-					println("denied 1");
+					//println("denied 1");
 					return true;
 				} 
 				if (super.pivotPoint.getX()+tmpOffsetX[2] < wallStart - blockSize/2) {
-					println("denied 2");
+					//println("denied 2");
 					return true;
 				} 
 				if (super.pivotPoint.getX()+tmpOffsetX[3] < wallStart - blockSize/2) {
-					println("denied 3");
+					//println("denied 3");
 					return true;
 				}
-				println("allowed east");
+				//println("allowed east");
 				return false;
 			}
 			

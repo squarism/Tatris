@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 // blocks move together as one set of blocks, offset by shape pattern
-class Piece implements Cloneable {
+class Piece {
 	
 	float x;		// center x
 	float y;		// center y
@@ -12,14 +12,6 @@ class Piece implements Cloneable {
 
 	public void setRotation(float angle) {
 		
-	}
-	
-	public Object clone() {  
-		try {  
-			return super.clone();  
-		} catch (Exception e) {  
-			return null;  
-		}  	
 	}
 	
 	public void draw() {
@@ -93,6 +85,34 @@ class Piece implements Cloneable {
 		return greatest;	
 	}
 
-	
-	
+	// this is used when dropping pieces
+	public Block[] getMaxYBlocks() {
+		HashMap map = new HashMap();
+		
+		for (int i=0; i<blocks.length; i++) {
+			Block test = (Block)map.get(blocks[i].getX());
+			
+			if(test != null) {
+				if (blocks[i].getY() > test.getY()){
+ 					map.put(blocks[i].getX(), blocks[i]);					
+				}
+			} else {
+				map.put(blocks[i].getX(), blocks[i]);					
+			}
+
+		}
+
+		Block returnBlocks[] = new Block[map.size()];
+		int i = 0;
+
+		Set mapset= map.keySet();
+		Iterator iter = mapset.iterator();
+		while(iter.hasNext()){
+			Float currentKey = (Float)iter.next();
+			returnBlocks[i++] = (Block)map.get(currentKey);
+		}
+
+		return returnBlocks;	
+	}
+		
 }

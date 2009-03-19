@@ -22,21 +22,12 @@ class Block {
   		stroke(0,150);		// black border, mostly opaque
 		strokeWeight(3);
 
-		//translate(x,y);
 		fill(fillColor[0], fillColor[1], fillColor[2]);
 		rect(this.x+x, this.y+y,height,width);
-		fill(255);
-		text(this.x+x + "," + this.y+y, this.x+x, this.y+y);
 
-
-		/*
-		beginShape();
-		vertex(-height/2, height/2);
-		vertex(-height/2, -height/2);
-		vertex(height/2, -height/2);
-		vertex(height/2, height/2);
-		endShape(CLOSE);
-		*/
+		// debug text
+		//fill(255);
+		//text(this.x+x + "," + this.y+y, this.x+x, this.y+y);
 	}
 	
 	// dead grid calls this
@@ -46,7 +37,10 @@ class Block {
 		strokeWeight(3);
 		fill(fillColor[0], fillColor[1], fillColor[2]);
 		rect(this.x, this.y,height,width);
-		text(x + "," + y, x, y);
+		
+		// debug text
+		//fill(255);
+		//text(x + "," + y, x, y);
 	}
 		
 	public void setX(float x) {
