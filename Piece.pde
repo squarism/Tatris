@@ -48,8 +48,10 @@ class Piece {
 	
 	public void round(Block block) {
 		// rounding to line up with grid
+		//println("before round x:" + block.getX() + " y:" + block.getY());
 		block.setX(Math.round(block.getX() / blockSize) * blockSize);
 		block.setY(Math.round(block.getY() / blockSize) * blockSize);
+		//println("after round x:" + block.getX() + " y:" + block.getY());
 	}
 	
 	public void update() {

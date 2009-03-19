@@ -27,8 +27,15 @@ class LPiece extends Piece {
 
 		// 45 deg pieces don't line up right
 		// TODO: figure out math to get rid of this
+		
+		super.round(blocks[0]);
+		super.round(blocks[1]);
+		super.round(blocks[2]);
+		super.round(blocks[3]);
+		/*
 		super.round(blocks[1]);
 		super.round(blocks[3]);
+		*/
 	}
 			
 	public void setRotation(float angle) {

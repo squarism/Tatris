@@ -59,6 +59,14 @@ class Block {
 		return y;
 	}
 	
+	public float getHeight() {
+		return height;
+	}
+
+	public float getWidth() {
+		return width;
+	}
+	
 	public String getFillColor() {
 		return fillColorRGB;
 	}
