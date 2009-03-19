@@ -113,10 +113,112 @@ class LPiece extends Piece {
 				}
 				//println("allowed east");
 				return false;
+			}	
+		}
+	}
+	
+	// TODO: refactor cleaner
+	public boolean rotateCollide(Block deadGrid[][], Point2d playField[]) {
+		
+		// center of piece x
+		float cx = super.pivotPoint.getX();
+		float cy = super.pivotPoint.getY();
+		
+		int bx = (int)((cx - playField[0].getX()) / blockSize);
+		int by = (int)((cy - playField[0].getY()) / blockSize);
+		
+		// TODO: pass this in instead
+		int gridSizeX = (int)((playField[1].getX() - playField[0].getX() ) / blockSize);
+		int gridSizeY = (int)((playField[1].getY() - playField[0].getY() ) / blockSize);
+		
+		// check for nearby pieces, 2 blocks in each direction, 5x5 total
+		boolean nearAnything = false;
+		int mx;
+		int my;
+		for (int ix=-2; ix <= 2; ix++) {
+			for (int iy=-2; iy <= 2; iy++) {
+				// TMP, mark some shit
+				mx = (int)bx+ix;
+				my = (int)by+iy;
+				if ( mx >= 0 && mx < gridSizeX && my >= 0 && my < gridSizeY ) { 
+					//deadGrid[mx][my] = new Block(mx*blockSize + playField[0].getX(), my*blockSize + playField[0].getY(), blockSize, "#AA0000");
+					if (deadGrid[mx][my] != null) {
+						// we are near something on the deadGrid
+						nearAnything = true;
+					}
+				}
 			}
-			
 		}
 		
+		
+		//println("NEAR ANYTHING:" + nearAnything);
+		if (nearAnything) {
+			float tmpRotation = rotation + 90.0f;
+			float tmpOffsetX[] = new float[4];
+			float tmpOffsetY[] = new float[4];
+			tmpOffsetX[0] = sin(tmpRotation + radians(180)) * blockSize;
+			tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
+			tmpOffsetX[2] = sin(tmpRotation + radians(270)) * blockSize;
+			tmpOffsetX[3] = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
+			
+			tmpOffsetY[0] = cos(tmpRotation + radians(0)) * blockSize;
+			tmpOffsetY[1] = cos(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
+			tmpOffsetY[2] = cos(tmpRotation + radians(90)) * blockSize;
+			tmpOffsetY[3] = cos(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
+			
+			
+			int testX;
+			int testY;
+			boolean hit = false;
+			for (int i=0; i<4; i++) {
+				testX = (int) ((super.pivotPoint.getX()+tmpOffsetX[i]) / blockSize);
+				testY = (int) ((super.pivotPoint.getY()+tmpOffsetY[i]) / blockSize);
+				
+				if (deadGrid[testX][testY] != null) {
+					hit = true;
+					return true;
+				}
+			}
+						
+		}
+		
+		
+
+		/*
+			if (super.pivotPoint.getX() + blockSize * 3 < wallWidth) {
+				//println("nowhere close near east wall");
+				return false;
+			} else {
+				float tmpRotation = rotation + 90.0f;
+				float tmpOffsetX[] = new float[4];
+				float tmpOffsetY[] = new float[4];
+				tmpOffsetX[0] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[2] = sin(tmpRotation + radians(270)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
+
+				if (super.pivotPoint.getX()+tmpOffsetX[0] >= wallWidth) {
+					//println("denied 0");
+					return true;
+				} 
+				if (super.pivotPoint.getX()+tmpOffsetX[1] >= wallWidth) {
+					//println("denied 1");
+					return true;
+				} 
+				if (super.pivotPoint.getX()+tmpOffsetX[2] >= wallWidth) {
+					//println("denied 2");
+					return true;
+				} 
+				if (super.pivotPoint.getX()+tmpOffsetX[3] >= wallWidth) {
+					//println("denied 3");
+					return true;
+				}
+				//println("allowed west");
+				return false;
+			}
+			
+			*/
+			return false;
 	}
 	
 	/* Call this whenever moving or rotating */

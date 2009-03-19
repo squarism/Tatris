@@ -62,6 +62,10 @@ class Piece {
 		return false;
 	}
 	
+	public boolean rotateCollide(Block deadGrid[][], Point2d playField[]) {
+		return false;
+	}
+	
 	public Block[] getBlocks() {
 		return blocks;
 	}

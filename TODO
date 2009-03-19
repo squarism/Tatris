@@ -1,0 +1,17 @@
+grep -nrH "TODO:" *.pde
+
+LPiece.pde:29:		// TODO: figure out math to get rid of this
+LPiece.pde:48:	// TODO: refactor cleaner
+LPiece.pde:129:		// TODO: figure out math to place them just right
+LPiece.pde:137:		// TODO: figure out math to place them just right
+LPiece.pde:154:		// TODO: better way?
+PlayState.pde:20:		// TODO: take out non primitives		
+PlayState.pde:97:			// TODO: add difficulty timer
+PlayState.pde:169:			// TODO: add difficulty timer
+PlayState.pde:221:				// TODO: finds too many hit points, do reverse MaxYBlock function on deadgrid
+PlayState.pde:245:				// TODO: why do I have to do this instead of copyToGrid()?
+PlayState.pde:252:				// TODO: why do I have to do this instead of copyToGrid()?
+PlayState.pde:268:			// TODO: replace with primatives
+PlayState.pde:506:	// TODO: offscreen drawing
+Tatris.pde:66:// TODO: framerate independant drawing
+

@@ -9,6 +9,9 @@ public class PlayState implements GameState {
 	float timer;
 	boolean gameOver;
 	
+	PGraphics grid;		// offscreen buffer for grid lines
+	PGraphics overlay;	// offscreen buffer for overlay (border etc)
+	
 	public PlayState() {
 		gameOver = false;	
 		blockSize=16.0f;
@@ -33,7 +36,11 @@ public class PlayState implements GameState {
 		Float playFieldWidth = playField[0].getX() - playField[1].getX();
 		Float playFieldHeight = playField[0].getY() - playField[1].getY();
 		
-		drawPlayField();
+		// create offscreen grid buffer image
+		createGrid();
+
+		// create offscreen overlay buffer image
+		createOverlay();
 		
 		// TWO LINE TEST
 		/*
@@ -62,7 +69,7 @@ public class PlayState implements GameState {
 		}*/
 		
 		// TWO LINE TEST
-		
+		/*
 		int tmp = 28;
 		for (int i=0; i < 15; i++) {
 			if (i != 8){
@@ -74,7 +81,29 @@ public class PlayState implements GameState {
 			if (i != 8){
 				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
 			}
+		}*/
+		
+		// BUMPY ROTATE GRID TEST
+		
+		String bumpy = "#FFAA00";
+		int tmp = 28;
+		for (int i=0; i < 15; i++) {
+			if (i != 8){
+				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
+			}
 		}
+		tmp--;
+		for (int i=0; i < 15; i++) {
+			if (i != 8){
+				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
+			}
+		}
+		tmp--;
+		for (int i=5; i < 8; i++) {
+				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
+		}
+		tmp--;
+		deadGrid[7][tmp] = new Block(7*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
 		
 	}
 	
@@ -104,7 +133,10 @@ public class PlayState implements GameState {
 	// last drawn appears on top
 	public void paint() {
 		background(25);
-		drawPlayField();
+
+		// display offscreen grid buffer image
+		image(grid, playField[0].getX() - 1, playField[0].getY() - 1);
+
 		currentPiece.draw();
 		
 		for (int x=0; x < gridSizeX; x++) {
@@ -113,7 +145,9 @@ public class PlayState implements GameState {
 			}
 		}
 
-		drawOverlay();
+		//drawOverlay();
+		image(overlay, playField[0].getX() - 2, playField[0].getY() - 2);
+		
 		fill(255);
 		text("fps: " + Math.round(fps * .1)/.1,8,8);
 	}
@@ -145,10 +179,16 @@ public class PlayState implements GameState {
 
 		// up arrow key
 		if (keyCode == UP) {
-			// checks collision with walls
-			if (! currentPiece.rotateCollide(playField[0].getX(), playField[1].getX())) {
-				currentPiece.setRotation(currentPiece.getRotation() + radians(90));
-			}
+			// checks collision with grid
+			if (! currentPiece.rotateCollide(deadGrid, playField)) {
+				if (! currentPiece.rotateCollide(playField[0].getX(), playField[1].getX())) {
+					currentPiece.setRotation(currentPiece.getRotation() + radians(90));
+				}
+			} 
+			// checks collision with walls			
+			//if (! currentPiece.rotateCollide(playField[0].getX(), playField[1].getX())) {
+			//	currentPiece.setRotation(currentPiece.getRotation() + radians(90));
+			//}
 		}
 
 		// down arrow key
@@ -187,6 +227,9 @@ public class PlayState implements GameState {
 			for (int i=0; i < yBlocks.length; i++) {
 				columns[i] = (int)((yBlocks[i].getX() - playField[0].getX()) / blockSize);
 				//println (columns[i]);
+				
+				// store the least Y value for yStart later
+				println("YB:" + yBlocks[i].getX() + "," + yBlocks[i].getY());
 			}
 			
 			// search down columns with Y in current piece
@@ -194,29 +237,38 @@ public class PlayState implements GameState {
 			ArrayList hitPoints = new ArrayList();
 			
 			boolean hitSomething = false;
+
+			// what row to start on, doesn't matter which because grid is always below
 			float yStart = yBlocks[0].getY() / blockSize;
-			
+			// row to end checking offset by playField
 			int rowEnd = (int)((playField[1].getY() - playField[0].getY()) / blockSize);
-			for (int col=0; col < columns.length - 1; col++) {
+			
+			// loop through columns and rows looking for pieces below
+			for (int col=0; col < columns.length; col++) {
 				for (int row=(int)yStart; row < rowEnd; row++) {
-					//println ("checking col:" + columns[col] + " row:" + row);
+					println ("checking col:" + columns[col] + " row:" + row);
 					
 					// hit something
-					try{
+					//try{
 					if(deadGrid[(int)columns[col]][row] != null) {
 						hitSomething = true;
+						
+						// this is a point of colision
 						hitPoint = deadGrid[(int)columns[col]][row];
+
+						// remember where we hit the grid
 						hitPoints.add(hitPoint);
-						//println(hitPoint.getX() + "," + hitPoint.getY());
+
+						println(hitPoint.getX() + "," + hitPoint.getY() + "hitsomething=" + hitSomething);
 					}
-				} catch (Exception e) {
-					println("!!!!! hit something EXCEPTION !!!");
-					e.printStackTrace();
-				}
+				//} catch (Exception e) {
+				//	println("!!!!! hit something EXCEPTION !!!");
+				//	e.printStackTrace();
+				//}
 				}
 			}
 
-			if (hitSomething) {
+			if (hitSomething == true) {
 
 				// TODO: finds too many hit points, do reverse MaxYBlock function on deadgrid
 				float closest = 0.0f;
@@ -225,15 +277,20 @@ public class PlayState implements GameState {
 
 				for (int i=0; i < yBlocks.length; i++) {
 					for (int j=0; j < hitPoints.size(); j++) {
-						Block b = (Block)hitPoints.get(j);
+						Block hpb = (Block)hitPoints.get(j);
+						//println("hpb x:" + hpb.getX() + " hpb y:" + hpb.getY());
 					
-						if (b.getX() == yBlocks[i].getX()) {
+						// is the block to test over a hitting point?
+						if (hpb.getX() == yBlocks[i].getX()) {
+							// initial seed vs setting closest to 9999 etc
 							if (closest == 0.0f) {
-								closest = b.getY() - yBlocks[i].getY();
+								closest = hpb.getY() - yBlocks[i].getY();
+								println("ZERO SHIT");
 							}
-							if ((b.getY() - yBlocks[i].getY()) < closest ) {
-								closest = b.getY() - yBlocks[i].getY();
-								closestBlock = b;
+							if ((hpb.getY() - yBlocks[i].getY()) < closest ) {
+								closest = hpb.getY() - yBlocks[i].getY();
+								closestBlock = hpb;
+								println("CLOSEST" + hpb.getY() + "," + hpb.getX());
 							}
 						}
 					}
@@ -271,17 +328,14 @@ public class PlayState implements GameState {
 			int x = fx.intValue();
 			int y = fy.intValue();
 			rowsAffected.add(y);
-			println("rows affected:" + y);
+			//println("rows affected:" + y);
 
 			//deadGrid[x][y] = new Block(x*blockSize, y*blockSize, blockSize, copyBlock[i].getFillColor());
 			deadGrid[x][y] = new Block(x*blockSize + playField[0].getX(), y*blockSize + playField[0].getY(), blockSize, "#444444");
 		}
 		
-		// TODO: check for done lines HERE
-	
+		// mark filled rows (tetrises) into doneRows ArrayList
 		// loop through 2 dimensional array without knowing length
-
-
 		ArrayList doneRows = new ArrayList();
 		int rows = deadGrid[0].length;
 		int cols = deadGrid.length;
@@ -290,20 +344,15 @@ public class PlayState implements GameState {
 		for (int j=0; j < rows; j++) {
 
 			done = 0;
-			for (int i=0; i < cols; i++) {
-				//if (deadGrid[i][j] !=null && deadGrid[i][j].getX() > 0) {
-					//println("col:" + i + " row:" + j + (deadGrid[i][j]==null));
-				
+			for (int i=0; i < cols; i++) {				
 				if (deadGrid[i][j] != null) {
-				//	if (deadGrid[i][j].getX() > 0) {
 					done++;
-					}
-				//}
+				}
 				//println("done checking col:" + i + " row:" + j + " was:" + done);
 				
 				//println(deadGrid[15][29].getFillColor());
 				if (done == cols) {
-					// add up all rows to be removed
+					// doneRows contains markers to done rows that need to be deleted
 					doneRows.add(j);
 					println("ROW " + j + " DONE");				
 				}
@@ -311,21 +360,20 @@ public class PlayState implements GameState {
 
 		}
 		
-
+		// now we remove rows if there are any to be done
 		if (doneRows.size() > 0) {
 
-			// now we remove rows in a few passes
-			Block trimmedGrid[][] = new Block[gridSizeX][gridSizeY];
 			// copy rows to new array, skipping rows that are done
+			Block trimmedGrid[][] = new Block[gridSizeX][gridSizeY];
 			for (int j=0; j < rows; j++) {
-			
 				// indexOf returns -1 when not found, else returns position in array
 				if(doneRows.indexOf(j) <= -1) {
-
+					// get all collumns in row not marked as done
 					for (int i=0; i < cols; i++) {
 						if (deadGrid[i][j] != null) {
 							Block dgb = deadGrid[i][j];
 							Block b = new Block(dgb.getX(), dgb.getY(), dgb.getHeight(), dgb.getFillColor());
+							// done rows are blank rows in trimmedGrid now
 							trimmedGrid[i][j] = b;
 						}
 					}				
@@ -334,27 +382,18 @@ public class PlayState implements GameState {
 
 
 			// using traditional for loop with iterator
-			for(Iterator i = doneRows.iterator(); i.hasNext(); ) {
-				println("Iter:" + i.next());
-			}
-			println("---");
-
-			// test -- checking memory locations
-			//println(deadGrid[14][28]);
-			//println(trimmedGrid[14][28]);
-
+			//for(Iterator i = doneRows.iterator(); i.hasNext(); ) {
+			//	println("Iter:" + i.next());
+			//}
+			//println("---");
 
 				
-			// compress grid
-		
+			// compress grid psuedocode:
 			// loop all
 			// if done
 			// loop back (ie: j ... 0)
 			// for each row, move blocks y+1 (down)
 
-
-
-		
 			// copy grid
 			Block compressedGrid[][] = new Block[gridSizeX][gridSizeY];
 			for (int i=0; i < cols; i++) {
@@ -367,9 +406,9 @@ public class PlayState implements GameState {
 					}
 				}
 			}
-		
+
+			// look for empty lines		
 			ArrayList emptyRows = new ArrayList();
-			// look for empty lines
 			for (int rowsI = rows - 1; rowsI >= 0; rowsI--) {
 				int empty = 0;
 				for (int colsI=0; colsI < cols; colsI++) {					
@@ -377,7 +416,6 @@ public class PlayState implements GameState {
 						empty++;
 					}
 				}
-
 				
 				if (empty == cols && rowsAffected.indexOf(rowsI) > -1 ) {
 					emptyRows.add(rowsI);
@@ -386,47 +424,42 @@ public class PlayState implements GameState {
 				
 			}
 			
+			// this moves a row down
+			// need to repeat for every empty row
 			for(Iterator i = emptyRows.iterator(); i.hasNext(); ) {
 
 				int rowNum = (Integer)i.next(); 
-				for (int k=0; k < rows; k++) {
-					if (k < rowNum){
-						println("doing row:" + k);
+				//for (int k=0; k < rows; k++) {
+				for (int k=rowNum; k > 0; k--) {					
+					// if you're above an empty row you need to go down one
+					// but k needs to start on the empty row, thus <= instead of <
+					if (k <= rowNum){
+						// loop through columns
 						for (int colI=0; colI < cols; colI++) {
+							// skip blank blocks (throws a NPE)
 							if (compressedGrid[colI][k] != null) {
+								// get block into variable for easier get() methods later
 								Block tgb = compressedGrid[colI][k];
+								// new block because of java memory gotcha, can't just get from trimmedGrid
 								Block b = new Block(tgb.getX(), tgb.getY(), tgb.getHeight(), tgb.getFillColor());
 								b.setY(b.getY() + blockSize);
+								// copy row above
 								compressedGrid[colI][k+1] = b;
+								// delete row above, otherwise it will copy itself all the way down
 								compressedGrid[colI][k] = null;
-								//compressedGrid[i][k] = trimmedGrid[i][k];
 							}
 						}
-
-						
 					}
 				}
 			}
-
-			
-			
-		
 			
 			// using traditional for loop with iterator
-			for(Iterator i = emptyRows.iterator(); i.hasNext(); ) {
-				println("Iter:" + i.next());
-			}
-			println("---");
-			
-					
-			
-			
-			
-			
-			
-			
-		
+			//for(Iterator i = emptyRows.iterator(); i.hasNext(); ) {
+			//	println("Iter:" + i.next());
+			//}
+			//println("---");
 
+			// compressedGrid is flattened and removed of done rows
 			deadGrid = compressedGrid;
 		}
 
@@ -528,7 +561,9 @@ public class PlayState implements GameState {
 		
 	// background art etc
 	// TODO: offscreen drawing
-	void drawPlayField() {
+	void createGrid() {
+		
+		/*
 		background(25);
 		// grid lines
 		strokeWeight(1);
@@ -538,17 +573,51 @@ public class PlayState implements GameState {
 		    	line(i, playField[0].getY(), i, playField[1].getY());
 		    	line(playField[0].getX(), j, playField[1].getX(), j);
 			}
+		}*/
+		
+		
+		grid = createGraphics( (int)(gridSizeX * blockSize) + 1, (int)(gridSizeY * blockSize) + 1, P2D);
+		grid.beginDraw();
+		grid.background(0);
+		grid.strokeWeight(1);
+		grid.stroke(10);
+		for (float i=0; i <= gridSizeX; i++) {
+			for (float j=0; j <= gridSizeY; j++) {
+		    	grid.line(i*blockSize, 0, i*blockSize, gridSizeY*blockSize);
+		    	grid.line(0, j*blockSize, gridSizeX*blockSize, j*blockSize);
+			}
 		}
+		grid.endDraw();
+		
+
+		
 	}
 	
 	// top most art
-	void drawOverlay() {
+	void createOverlay() {
+		
+		// +3 is for interior padding border
+		int xlen = (int)(playField[1].getX() - playField[0].getX()) + 3;
+		int ylen = (int)(playField[1].getY() - playField[0].getY()) + 3;
+		overlay = createGraphics( xlen + 3, ylen + 3, P2D);
+		
+		overlay.beginDraw();
+		overlay.strokeWeight(1);
+  		overlay.stroke(255);
+		overlay.line(0, 0, xlen, 0);	// top line
+		overlay.line(xlen, 0, xlen, ylen);	// right line
+		overlay.line(xlen, ylen, 0, ylen); // bottom line		
+		overlay.line(0, ylen, 0, 0); // left line				
+		overlay.endDraw();
+		
 		// border box
+		/*
 		strokeWeight(3);
   		stroke(255);
 		line(playField[0].getX(), playField[0].getY(), playField[1].getX(), playField[0].getY());	// top line
 		line(playField[1].getX(), playField[0].getY(), playField[1].getX(), playField[1].getY());	// right line
 		line(playField[1].getX(), playField[1].getY(), playField[0].getX(), playField[1].getY());	// bottom line		
 		line(playField[0].getX(), playField[1].getY(), playField[0].getX(), playField[0].getY());	// left line				
+		*/
 	}
 }
