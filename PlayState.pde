@@ -3,8 +3,8 @@ public class PlayState implements GameState {
 	Piece currentPiece;
 	float blockSize;
 	Block deadGrid[][];		// the grid are the blocks that are done on the field
-	Float gridSizeX;
-	Float gridSizeY;	
+	int gridSizeX;
+	int gridSizeY;	
 	Point2d playField[] = new Point2d[2];
 	float timer;
 	boolean gameOver;
@@ -12,12 +12,20 @@ public class PlayState implements GameState {
 	public PlayState() {
 		gameOver = false;	
 		currentPiece = new LPiece(width/2,32.0f);
-		blockSize=16.0f;		
-		gridSizeX = new Float(width/blockSize);
-		gridSizeY = new Float(height/blockSize);		
-		deadGrid = new Block[gridSizeX.intValue() + 1][gridSizeY.intValue() + 1];
+		blockSize=16.0f;
+				
+		// playfield is 15x29
 		playField[0] = new Point2d(blockSize, blockSize);	// start
 		playField[1] = new Point2d(256,480);				// end
+		
+		// TODO: take out non primitives		
+		gridSizeX = (int)((playField[1].getX() - playField[0].getX() ) / blockSize) + 1;
+		gridSizeY = (int)((playField[1].getY() - playField[0].getY() ) / blockSize) + 1;
+		
+		println(gridSizeX + " " + gridSizeY);
+		
+		deadGrid = new Block[gridSizeX][gridSizeY];
+		
 		timer = 1.0f;
 		
 		// create graphics offscreen size of play field
@@ -56,8 +64,8 @@ public class PlayState implements GameState {
 		drawPlayField();
 		currentPiece.draw();
 		
-		for (int x=0; x < gridSizeX.intValue(); x++) {
-			for (int y=0; y < gridSizeY.intValue(); y++) {
+		for (int x=0; x < gridSizeX; x++) {
+			for (int y=0; y < gridSizeY; y++) {
 				if (deadGrid[x][y]!=null) deadGrid[x][y].draw();
 			}
 		}
@@ -94,6 +102,7 @@ public class PlayState implements GameState {
 
 		// up arrow key
 		if (keyCode == UP) {
+			// checks collision with walls
 			if (! currentPiece.rotateCollide(playField[0].getX(), playField[1].getX())) {
 				currentPiece.setRotation(currentPiece.getRotation() + radians(90));
 			}
@@ -141,7 +150,6 @@ public class PlayState implements GameState {
 					
 					// hit something
 					if(deadGrid[(int)columns[col]][row] != null) {
-						println("there's something down there");
 						hitSomething = true;
 						hitPoint = deadGrid[(int)columns[col]][row];
 						hitPoints.add(hitPoint);
@@ -159,18 +167,14 @@ public class PlayState implements GameState {
 				for (int i=0; i < yBlocks.length; i++) {
 					for (int j=0; j < hitPoints.size(); j++) {
 						Block b = (Block)hitPoints.get(j);
-				
-						println("ylen " + yBlocks.length + " hitlen" + hitPoints.size());
 					
 						if (b.getX() == yBlocks[i].getX()) {
 							if (closest == 0.0f) {
-								println("b.getY()" + b.getY() + " yBlocks[j].getY()" + yBlocks[i].getY());
 								closest = b.getY() - yBlocks[i].getY();
 							}
 							if ((b.getY() - yBlocks[i].getY()) < closest ) {
 								closest = b.getY() - yBlocks[i].getY();
 								closestBlock = b;
-								println(closestBlock.getX() + " " + closestBlock.getY());
 							}
 						}
 					}
@@ -190,23 +194,9 @@ public class PlayState implements GameState {
 				// TODO: why do I have to do this instead of copyToGrid()?
 				timer = 0;
 			}
-			
-
-			
-			/*
-			} else {
-				if (hitPoint.getY() < deadGrid[(int)columns[col]][row].getY()) {
-					hitPoint = deadGrid[(int)columns[col]][row];
-					println("---HIT----" + hitPoint.getX() + " " + hitPoint.getY() );
-				}
-			}*/
-
-
-			
-			// copy to grid
-
 		}
 	}
+	
 	public void keyReleased() {
 
 	}
@@ -225,6 +215,38 @@ public class PlayState implements GameState {
 		}
 		
 		// TODO: check for done lines HERE
+	
+		// loop through 2 dimensional array without knowing length
+
+
+		ArrayList doneRows = new ArrayList();
+		int rows = deadGrid[0].length;
+		int cols = deadGrid.length;
+		
+		println("rows:" + rows + " cols:" + cols);
+		
+		for (int i=0; i < cols; i++) {
+			//println("one");
+			boolean done = true;
+			for (int j=0; j < rows; j++) {
+				//println("two");
+				if (deadGrid[i][j] == null) {
+					done = false;
+					//break;
+				}
+				//println("done checking row:" + i + " was:" + done);
+			}
+			if (done) {
+				doneRows.add(i);
+			}
+		}
+		
+		for (int i=0; i < doneRows.size(); i++) {
+			println(doneRows.get(i));
+		}
+		
+		
+		
 		
 		// new piece HERE
 		currentPiece = new LPiece(playField[1].getX() / 2, 32.0f);	
@@ -268,45 +290,44 @@ public class PlayState implements GameState {
 		boolean hit = false;
 			
 		for (int i=0; i < 4; i++) {
-			Float fx = checkBlocks[i].getX() / blockSize;
-			Float fy = checkBlocks[i].getY() / blockSize;
+			Float fx = (checkBlocks[i].getX() + blockSize) / blockSize;
+			Float fy = (checkBlocks[i].getY() + blockSize) / blockSize;
 			
 			
 			//println("block" + i + " " + fx * blockSize + " " + fy * blockSize);
 			if (direction > 0) {
-				int x = fx.intValue() + 1;
-				int y = fy.intValue();
-				// we hit something on the grid
-				if(deadGrid[x][y] != null) {
-					println("deny right");
-					return true;
-				}		
+				// limit x to edge of playfield
+				int x = fx.intValue();
+				if (x < gridSizeX - 1) {
+					int y = fy.intValue() - 1;
+					// we hit something on the grid
+					if(deadGrid[x][y] != null) {
+						println("deny right");
+						return true;
+					}		
+				}
 				
 			} else {
-				int x = fx.intValue() - 1;
-				int y = fy.intValue();
-				// we hit something on the grid
-				if(deadGrid[x][y] != null) {
-					println("deny left");
-					return true;
-				}		
-				
+				// limit x to edge of playfield
+				int x = fx.intValue() - 2;
+				println("x is:" + x);					
+				if (x > 0) {
+					int y = fy.intValue() - 1;
+					// we hit something on the grid
+					if(deadGrid[x][y] != null) {
+						println("deny left");
+						return true;
+					}
+				}
 			}
-
-
+			
 		}
+		println("--");
 		
 		return false;
-		/*
-		if (hit == true) {
-			return true;
-		} else {
-			return false;
-		}*/
+
 	}
-	
-	
-	
+		
 	// background art etc
 	// TODO: offscreen drawing
 	void drawPlayField() {
