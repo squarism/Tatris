@@ -25,6 +25,9 @@ class Block {
 		//translate(x,y);
 		fill(fillColor[0], fillColor[1], fillColor[2]);
 		rect(this.x+x, this.y+y,height,width);
+		fill(255);
+		text(this.x+x + "," + this.y+y, this.x+x, this.y+y);
+
 
 		/*
 		beginShape();
@@ -36,12 +39,14 @@ class Block {
 		*/
 	}
 	
+	// dead grid calls this
 	public void draw() {
 
   		stroke(0,150);		// black border, mostly opaque
 		strokeWeight(3);
 		fill(fillColor[0], fillColor[1], fillColor[2]);
 		rect(this.x, this.y,height,width);
+		text(x + "," + y, x, y);
 	}
 		
 	public void setX(float x) {

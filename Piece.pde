@@ -1,25 +1,33 @@
 import java.util.ArrayList;
 
 // blocks move together as one set of blocks, offset by shape pattern
-class Piece {
+class Piece implements Cloneable {
 	
 	float x;		// center x
 	float y;		// center y
 	float blockSize=16.0f;	// used as offset, width and height
 	float rotation=radians(0.0f);
 	Block pivotPoint = new Block(x,y, blockSize, "#AAAAAA");;
-	
 	Block[] blocks = new Block[4];
-	
+
 	public void setRotation(float angle) {
 		
+	}
+	
+	public Object clone() {  
+		try {  
+			return super.clone();  
+		} catch (Exception e) {  
+			return null;  
+		}  	
 	}
 	
 	public void draw() {
 		for (int i=0; i < 4; i++) {
 			blocks[i].draw(x,y);
 		}
-		pivotPoint.draw(x,y);	
+		//pivotPoint.draw(x,y);
+
 	}
 	
 	public float getRotation() {

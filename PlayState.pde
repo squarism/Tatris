@@ -1,16 +1,16 @@
 public class PlayState implements GameState {
 
 	Piece currentPiece;
-	Piece currentPiece2;
-	Piece currentPiece3;
-	Piece currentPiece4;
+
 	float blockSize;
 	
-	Block deadGrid[][];
+	Block deadGrid[][];		// the grid are the blocks that are done on the field
 	Float gridSizeX;
 	Float gridSizeY;
 	
 	Point2d playField[] = new Point2d[2];
+	
+	float timer;
 	
 	public PlayState() {
 		currentPiece = new LPiece(width/2,32.0f);
@@ -25,31 +25,41 @@ public class PlayState implements GameState {
 		playField[1] = new Point2d(256,480);				// end
 		
 		println(gridSizeX.intValue() + " " + gridSizeY.intValue());
+		
+		timer = 1.0f;
 	}
 	
 	public void update(float elapsed) {
 		currentPiece.update();
+		
+		timer -= elapsed;
 
 		// hit bottom, copy to deadGrid
 		if (currentPiece.getMaxY() > playField[1].getY() - blockSize * 2) {
-			Block copyBlock[] = currentPiece.getBlocks();
-			for (int i=0; i < 4; i++) {
-				
-				// int x = Math.round(copyBlock[i].getX() / blockSize) * blockSize;
-				Float fx = copyBlock[i].getX() / blockSize;
-				Float fy = copyBlock[i].getY() / blockSize;
-				int x = fx.intValue();
-				int y = fy.intValue();
-				
-				deadGrid[x][y] = new Block(x*blockSize, y*blockSize, blockSize, copyBlock[i].getFillColor());
-				
-				// check for done lines
-			}
+			copyToGrid();
+			// check for done lines
 			currentPiece = new LPiece(width/2,32.0f);
+		} 
+		
+		if (timer <= 0) {
+			
+			// move down one
+			//Piece testPiece = new Piece();
+			//testPiece = (LPiece)currentPiece.clone();
+			//testPiece.setY(testPiece.getY() + blockSize);
+			
+
+			// won't hit, move down
+			if (! gridCollideY(currentPiece.getBlocks())) {
+				currentPiece.setY(currentPiece.getY() + blockSize);
+			} else {
+				copyToGrid();
+				currentPiece = new LPiece(width/2,32.0f);
+			}
+			
+			timer = 1;
+			
 		}
-		
-		// check for blocks around current piece
-		
 	}
 	
 	// order of drawing in paint() is important
@@ -57,6 +67,7 @@ public class PlayState implements GameState {
 	public void paint() {
 		background(25);
 
+		drawPlayField();
 
 		currentPiece.draw();
 		
@@ -66,7 +77,7 @@ public class PlayState implements GameState {
 			}
 		}
 
-		drawPlayField();
+
 			
 		fill(255);
 		text("fps: " + Math.round(fps * .1)/.1,8,8);
@@ -100,13 +111,71 @@ public class PlayState implements GameState {
 		}
 
 		if (keyCode == DOWN) {
+			// When player presses down, reset timer to make gameplay more
+			// predictable and smooth.  Pieces can fall "twice" otherwise.
+			timer = 1;
+
 			if (currentPiece.getMaxY() + blockSize < playField[1].getY()) {
 				currentPiece.setY(currentPiece.getY() + blockSize);
 			}
+
+			
+			// user pressed down, check for grid collide
+			if (gridCollideY(currentPiece.getBlocks())) {
+				println("collision on grid");
+				copyToGrid();
+				currentPiece = new LPiece(width/2,32.0f);
+			}
+			
 		}
 	}
 	public void keyReleased() {
 
+	}
+	
+	void copyToGrid() {
+		Block copyBlock[] = currentPiece.getBlocks();
+
+		for (int i=0; i < 4; i++) {
+			Float fx = copyBlock[i].getX() / blockSize;
+			Float fy = copyBlock[i].getY() / blockSize;
+			int x = fx.intValue();
+			int y = fy.intValue();
+
+			//deadGrid[x][y] = new Block(x*blockSize, y*blockSize, blockSize, copyBlock[i].getFillColor());
+			deadGrid[x][y] = new Block(x*blockSize, y*blockSize, blockSize, "#444444");
+		}
+	}
+
+	// check for blocks below current piece				
+	boolean gridCollideY(Block checkBlocks[]) {	
+		//Block copyBlock[] = currentPiece.getBlocks();
+		
+		boolean hit = false;
+			
+		for (int i=0; i < 4; i++) {
+			Float fx = checkBlocks[i].getX() / blockSize;
+			Float fy = checkBlocks[i].getY() / blockSize;
+			
+			
+			//println("block" + i + " " + fx * blockSize + " " + fy * blockSize);
+			int x = fx.intValue();
+			int y = fy.intValue() + 1;
+
+			// we hit something on the grid
+			if(deadGrid[x][y] != null) {
+				
+				//println(deadGrid[x][y].getX());
+				//println(deadGrid[x][y].getY());
+				hit = true;
+			}		
+		}
+		
+		if (hit == true) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	void drawPlayField() {

@@ -1,4 +1,4 @@
-class LPiece extends Piece {
+class LPiece extends Piece implements Cloneable {
 	
 	/*
 			3   #
@@ -11,23 +11,17 @@ class LPiece extends Piece {
 	// offsets are relative to pivotpoint (center)
 	// block numbers are in ASCII art at top
 	// * is pivot point	
-	float offset0x;
-	float offset0y;
-	float offset1x;
-	float offset1y;
-	float offset2x;
-	float offset2y;
-	float offset3x;
-	float offset3y;
+	float offsetX[] = new float[4];
+	float offsetY[] = new float[4];
 
 	public LPiece(float x, float y) {	
 		super.setX(x);
 		super.setY(y);
 				
-		blocks[0] = new Block(x + offset0x, y + offset0y, blockSize, "#3366CC");
-		blocks[1] = new Block(x + offset1x, y + offset1y, blockSize, "#3366CC");
-		blocks[2] = new Block(x + offset2x, y + offset2y, blockSize, "#3366CC");
-		blocks[3] = new Block(x + offset3x, y + offset3y, blockSize, "#3366CC");
+		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#3366CC");
+		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#3366CC");
+		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#3366CC");
+		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#3366CC");
 
 		update();
 
@@ -37,6 +31,14 @@ class LPiece extends Piece {
 		super.round(blocks[3]);
 	}
 	
+	public Object clone() {  
+		try {  
+			return super.clone();  
+		} catch (Exception e) {  
+			return null;  
+		}  	
+	}
+			
 	public void setRotation(float angle) {
 		this.rotation = angle;
 
@@ -54,24 +56,26 @@ class LPiece extends Piece {
 				return false;
 			} else {
 				float tmpRotation = rotation + 90.0f;
-				float tmpOffset0x = sin(tmpRotation + radians(180)) * blockSize;
-				float tmpOffset1x = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
-				float tmpOffset2x = sin(tmpRotation + radians(270)) * blockSize;
-				float tmpOffset3x = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
+				float tmpOffsetX[] = new float[4];
+				float tmpOffsetY[] = new float[4];
+				tmpOffsetX[0] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[2] = sin(tmpRotation + radians(270)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
 
-				if (super.pivotPoint.getX()+tmpOffset0x >= wallWidth) {
+				if (super.pivotPoint.getX()+tmpOffsetX[0] >= wallWidth) {
 					println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffset1x >= wallWidth) {
+				if (super.pivotPoint.getX()+tmpOffsetX[1] >= wallWidth) {
 					println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffset2x >= wallWidth) {
+				if (super.pivotPoint.getX()+tmpOffsetX[2] >= wallWidth) {
 					println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffset3x >= wallWidth) {
+				if (super.pivotPoint.getX()+tmpOffsetX[3] >= wallWidth) {
 					println("denied 3");
 					return true;
 				}
@@ -86,23 +90,25 @@ class LPiece extends Piece {
 				return false;
 			} else {
 				float tmpRotation = rotation + 90.0f;
-				float tmpOffset0x = sin(tmpRotation + radians(180)) * blockSize;
-				float tmpOffset1x = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
-				float tmpOffset2x = sin(tmpRotation + radians(270)) * blockSize;
-				float tmpOffset3x = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
-				if (super.pivotPoint.getX()+tmpOffset0x < wallStart - blockSize/2) {
+				float tmpOffsetX[] = new float[4];
+				float tmpOffsetY[] = new float[4];
+				tmpOffsetX[0] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[2] = sin(tmpRotation + radians(270)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
+				if (super.pivotPoint.getX()+tmpOffsetX[0] < wallStart - blockSize/2) {
 					println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffset1x < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX()+tmpOffsetX[1] < wallStart - blockSize/2) {
 					println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffset2x < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX()+tmpOffsetX[2] < wallStart - blockSize/2) {
 					println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffset3x < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX()+tmpOffsetX[3] < wallStart - blockSize/2) {
 					println("denied 3");
 					return true;
 				}
@@ -117,33 +123,33 @@ class LPiece extends Piece {
 	/* Call this whenever moving or rotating */
 	public void update() {
 		
-		offset0x = sin(rotation + radians(180)) * blockSize;
-		offset0y = cos(rotation + radians(0)) * blockSize;
+		offsetX[0] = sin(rotation + radians(180)) * blockSize;
+		offsetY[0] = cos(rotation + radians(0)) * blockSize;
 
 		// corner pieces (45deg) are tricky, have to be rounded
 		// TODO: figure out math to place them just right
-		offset1x = sin(rotation + radians(225)) * (blockSize + (blockSize / 2));
-		offset1y = cos(rotation + radians(45)) * (blockSize + (blockSize / 2));
+		offsetX[1] = sin(rotation + radians(225)) * (blockSize + (blockSize / 2));
+		offsetY[1] = cos(rotation + radians(45)) * (blockSize + (blockSize / 2));
 
-		offset2x = sin(rotation + radians(270)) * blockSize;
-		offset2y = cos(rotation + radians(90)) * blockSize;
+		offsetX[2] = sin(rotation + radians(270)) * blockSize;
+		offsetY[2] = cos(rotation + radians(90)) * blockSize;
 
 		// corner pieces (45deg) are tricky, have to be rounded
 		// TODO: figure out math to place them just right
-		offset3x = sin(rotation + radians(315)) * (blockSize + (blockSize / 2));
-		offset3y = cos(rotation + radians(135)) * (blockSize + (blockSize / 2));
+		offsetX[3] = sin(rotation + radians(315)) * (blockSize + (blockSize / 2));
+		offsetY[3] = cos(rotation + radians(135)) * (blockSize + (blockSize / 2));
 		
-		blocks[0].setX(super.pivotPoint.getX() + offset0x);
-		blocks[0].setY(super.pivotPoint.getY() + offset0y);
+		blocks[0].setX(super.pivotPoint.getX() + offsetX[0]);
+		blocks[0].setY(super.pivotPoint.getY() + offsetY[0]);
 		
-		blocks[1].setX(super.pivotPoint.getX() + offset1x);
-		blocks[1].setY(super.pivotPoint.getY() + offset1y);
+		blocks[1].setX(super.pivotPoint.getX() + offsetX[1]);
+		blocks[1].setY(super.pivotPoint.getY() + offsetY[1]);
 
-		blocks[2].setX(super.pivotPoint.getX() + offset2x);
-		blocks[2].setY(super.pivotPoint.getY() + offset2y);
+		blocks[2].setX(super.pivotPoint.getX() + offsetX[2]);
+		blocks[2].setY(super.pivotPoint.getY() + offsetY[2]);
 
-		blocks[3].setX(super.pivotPoint.getX() + offset3x);
-		blocks[3].setY(super.pivotPoint.getY() + offset3y);
+		blocks[3].setX(super.pivotPoint.getX() + offsetX[3]);
+		blocks[3].setY(super.pivotPoint.getY() + offsetY[3]);
 
 		// rounding to line up with grid
 		// TODO: better way?
