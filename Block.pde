@@ -5,17 +5,22 @@ class Block {
 	float height;	
 	float width;
 	int[] fillColor = new int[2];	// color in hex
+	String fillColorRGB;
 
 	
 	public Block(float x, float y, float size, String fillColor) {
 		this.x = x;
 		this.y = y;
+		this.fillColorRGB = fillColor;
 		this.fillColor = hex2rgb(fillColor);
 		this.height = size;
 		this.width = size;
 	}
 	
 	public void draw(float x, float y) {
+
+  		stroke(0,150);		// black border, mostly opaque
+		strokeWeight(3);
 
 		//translate(x,y);
 		fill(fillColor[0], fillColor[1], fillColor[2]);
@@ -29,6 +34,14 @@ class Block {
 		vertex(height/2, height/2);
 		endShape(CLOSE);
 		*/
+	}
+	
+	public void draw() {
+
+  		stroke(0,150);		// black border, mostly opaque
+		strokeWeight(3);
+		fill(fillColor[0], fillColor[1], fillColor[2]);
+		rect(this.x, this.y,height,width);
 	}
 		
 	public void setX(float x) {
@@ -45,6 +58,14 @@ class Block {
 
 	public float getY() {
 		return y;
+	}
+	
+	public String getFillColor() {
+		return fillColorRGB;
+	}
+	
+	public void setFillColor(String rgb) {
+		this.fillColorRGB = rgb;
 	}
 
 	int[] hex2rgb(String hex) {

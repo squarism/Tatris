@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+// blocks move together as one set of blocks, offset by shape pattern
 class Piece {
 	
 	float x;		// center x
@@ -29,6 +30,10 @@ class Piece {
 		pivotPoint.setX(x);
 	}
 	
+	public void setX(float x, float wall) {
+		pivotPoint.setX(x);
+	}
+	
 	public void setY(float y) {
 		pivotPoint.setY(y);
 	}
@@ -46,6 +51,40 @@ class Piece {
 		block.setX(Math.round(block.getX() / blockSize) * blockSize);
 		block.setY(Math.round(block.getY() / blockSize) * blockSize);
 	}
+	
+	public void update() {
+		
+	}
+	
+	public boolean rotateCollide(float wallStart, float wallWidth) {
+		return false;
+	}
+	
+	public Block[] getBlocks() {
+		return blocks;
+	}
+	
+	// absolute
+	public float getMaxX() {
+		float greatest = 0;
+		for (int i=0; i<4; i++) {
+			if (blocks[i].getX() > greatest) {
+				greatest = blocks[i].getX() + x;
+			}
+		}
+		return greatest;
+	}
+
+	public float getMaxY() {
+		float greatest = 0;
+		for (int i=0; i<4; i++) {
+			if (blocks[i].getY() > greatest) {
+				greatest = blocks[i].getY() + y;
+			}
+		}
+		return greatest;	
+	}
+
 	
 	
 }

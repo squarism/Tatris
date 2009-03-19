@@ -9,7 +9,6 @@ public class GameOverState implements GameState {
 		background(0);
 		textCentered("GAME OVER", height/4, 255, 0);
 		fill(255,255,255);
-		rotate(90);
 		textFont(regFont,12);
 		textCentered(":(", height/4+24,255, 0);	
 	}
