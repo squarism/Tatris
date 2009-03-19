@@ -1,0 +1,4 @@
+Tatris-090316a
+--------------
+Fixed weird bug where pieces would be able to be rotated off boundry and play field.  Had to call update() on piece after rotations.
+

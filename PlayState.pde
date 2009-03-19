@@ -1,7 +1,7 @@
 public class PlayState implements GameState {
 	
 	Piece currentPiece;
-	Piece pieceBag[] = new Piece[7];		// a bag of 7 pieces
+	PieceBag pieceBag;
 	int pieceBagI;
 	float blockSize;
 	Block deadGrid[][];		// the grid are the blocks that are done on the field
@@ -28,10 +28,7 @@ public class PlayState implements GameState {
 		
 		println("GRIDSIZE " + gridSizeX + " " + gridSizeY);
 		
-		pieceBag[0] = new LPiece(playField[1].getX()/2, 32.0f);
-		pieceBag[1] = new LPiece(playField[1].getX()/2, 32.0f);
-		pieceBagI = 0;
-		
+		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
 		currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -384,21 +381,27 @@ public class PlayState implements GameState {
 		}
 
 		// do grab bag of pieces checks
-		// if we are on piece 7 then jumble the bag again
-		if (pieceBagI == pieceBag.length) {
-			// jumble
-			
-			// reset iterator
-			pieceBagI = 0;
-		}
-		
 		// get piece from bag
+		Piece newPiece = pieceBag.getPiece();
+		
 		// if piece doesn't collide with grid set currentPiece to got piece
 		// else set gameOver=true
+		Block newPieceBlocks[] = newPiece.getBlocks();
+		for (int i=0; i < 4; i++) {
+			int npx = (int)((newPieceBlocks[i].getX() - playField[0].getX()) / blockSize);
+			int npy = (int)((newPieceBlocks[i].getY() - playField[0].getY()) / blockSize);
+			if (deadGrid[npx][npy] != null) {
+				println("GAME OVER MAN");
+				gameOver=true;
+			}
+		}
+		
 		
 		
 		// new piece HERE
-		currentPiece = new LPiece(playField[1].getX() / 2, 32.0f);
+		//currentPiece = new LPiece(playField[1].getX() / 2, 32.0f);
+		//currentPiece = pieceBag.getPiece();
+		currentPiece = newPiece;
 		
 		// check for game over HERE
 		
