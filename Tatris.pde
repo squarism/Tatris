@@ -1,8 +1,8 @@
 //Block block = new Block(125,215,50,"#2020AA");
 
-NESJoystick nes;
+//NESJoystick nes;
 
-ArrayList pieces = new ArrayList();
+//ArrayList pieces = new ArrayList();
 
 GameState gameState;
 
@@ -16,15 +16,17 @@ PFont regFont;		// readable font
 PFont crackedFont;	// huge font
 
 void setup(){ 
-  //setup game display area, background colour and framerate 
-  size(384, 512); 
-  frameRate(60);
-  fill(0); 
-  strokeWeight(3);	// keep an odd number for best look
-  stroke(0,150);		// black border, mostly opaque
-  //rectMode(CENTER); 
-  smooth();
-  //strokeCap(ROUND);
+  	//setup game display area, background colour and framerate 
+  	size(384, 512); 
+  	frameRate(60);
+  	fill(0); 
+  	//strokeWeight(3);	// keep an odd number for best look
+  	//stroke(0,150);		// black border, mostly opaque
+  	//rectMode(CENTER); 
+	//smooth();
+	noSmooth();
+  	//strokeCap(ROUND);
+	strokeCap(SQUARE);
 	smallFont = loadFont("04b-08-8.vlw");
 	crackedFont = loadFont("Cracked-48.vlw");
 	regFont = loadFont("MyriadPro-Regular-12.vlw");
@@ -47,7 +49,7 @@ void setup(){
    	*/
 
 	gameState = new PlayState();
-  nes = new NESJoystick(this);
+  //nes = new NESJoystick(this);
 
 
 

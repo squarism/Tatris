@@ -18,9 +18,9 @@ class Block {
 	}
 	
 	public void draw(float x, float y) {
-
-  		stroke(0,150);		// black border, mostly opaque
-		strokeWeight(3);
+		//stroke(255,20);
+  		stroke(0,125);		// 0, 150 = black border, mostly opaque
+		strokeWeight(3);	// default 3
 
 		fill(fillColor[0], fillColor[1], fillColor[2]);
 		rect(this.x+x, this.y+y,height,width);
@@ -32,9 +32,10 @@ class Block {
 	
 	// dead grid calls this
 	public void draw() {
-
-  		stroke(0,150);		// black border, mostly opaque
-		strokeWeight(3);
+		//stroke(255,20);
+  		//stroke(0,150);		// black border, mostly opaque
+		//strokeWeight(5);
+		
 		fill(fillColor[0], fillColor[1], fillColor[2]);
 		rect(this.x, this.y,height,width);
 		

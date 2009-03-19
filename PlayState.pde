@@ -105,10 +105,16 @@ public class PlayState implements GameState {
 		tmp--;
 		deadGrid[7][tmp] = new Block(7*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
 		
+		
+		// SINGLE GODDAMN BLOCK TEST -- THROUGH FLOOR BUG
+		//deadGrid[7][28] = new Block(7*blockSize + playField[0].getX(), 28*blockSize + playField[0].getY(), blockSize, "#FFAA00");
+		
 	}
 	
 	public void update(float elapsed) {
+
 		currentPiece.update();
+
 		timer -= elapsed;
 		// hit bottom, copy to deadGrid
 		if (currentPiece.getMaxY() > playField[1].getY() - blockSize * 2 && timer <= 0) {
@@ -117,9 +123,11 @@ public class PlayState implements GameState {
 		
 		// this is the timed downward movement of the piece
 		if (timer <= 0) {
-			if (! gridCollideY(currentPiece.getBlocks())) {				// won't hit, move down
-				//currentPiece.setY(currentPiece.getY() + blockSize);
-			} else {													// we hit something, deadgrid it
+			if (! gridCollideY(currentPiece.getBlocks())) {
+				// won't hit, move down
+				currentPiece.setY(currentPiece.getY() + blockSize);
+			} else {
+				// we hit something, deadgrid it
 				copyToGrid();
 			}
 
@@ -138,7 +146,10 @@ public class PlayState implements GameState {
 		image(grid, playField[0].getX() - 1, playField[0].getY() - 1);
 
 		currentPiece.draw();
-		
+				
+		stroke(0,125);		// black border, mostly opaque
+		strokeWeight(3);
+  		
 		for (int x=0; x < gridSizeX; x++) {
 			for (int y=0; y < gridSizeY; y++) {
 				if (deadGrid[x][y]!=null) deadGrid[x][y].draw();
@@ -161,6 +172,7 @@ public class PlayState implements GameState {
 	    }
 	}
 
+	// TODO: instead of setting X etc, set a variable and let update() move pieces.
 	public void keyPressed() {
 		
 		// left arrow key
@@ -221,94 +233,7 @@ public class PlayState implements GameState {
 		
 		// space bar
 		if (keyCode == ' ') {
-			// get greatest Y values
-			Block yBlocks[] = currentPiece.getMaxYBlocks();
-			int columns[] = new int[yBlocks.length];
-			for (int i=0; i < yBlocks.length; i++) {
-				columns[i] = (int)((yBlocks[i].getX() - playField[0].getX()) / blockSize);
-				//println (columns[i]);
-				
-				// store the least Y value for yStart later
-				println("YB:" + yBlocks[i].getX() + "," + yBlocks[i].getY());
-			}
-			
-			// search down columns with Y in current piece
-			Block hitPoint = null;
-			ArrayList hitPoints = new ArrayList();
-			
-			boolean hitSomething = false;
-
-			// what row to start on, doesn't matter which because grid is always below
-			float yStart = yBlocks[0].getY() / blockSize;
-			// row to end checking offset by playField
-			int rowEnd = (int)((playField[1].getY() - playField[0].getY()) / blockSize);
-			
-			// loop through columns and rows looking for pieces below
-			for (int col=0; col < columns.length; col++) {
-				for (int row=(int)yStart; row < rowEnd; row++) {
-					println ("checking col:" + columns[col] + " row:" + row);
-					
-					// hit something
-					//try{
-					if(deadGrid[(int)columns[col]][row] != null) {
-						hitSomething = true;
-						
-						// this is a point of colision
-						hitPoint = deadGrid[(int)columns[col]][row];
-
-						// remember where we hit the grid
-						hitPoints.add(hitPoint);
-
-						println(hitPoint.getX() + "," + hitPoint.getY() + "hitsomething=" + hitSomething);
-					}
-				//} catch (Exception e) {
-				//	println("!!!!! hit something EXCEPTION !!!");
-				//	e.printStackTrace();
-				//}
-				}
-			}
-
-			if (hitSomething == true) {
-
-				// TODO: finds too many hit points, do reverse MaxYBlock function on deadgrid
-				float closest = 0.0f;
-				Block closestBlock = null;
-				float distance = 0.0f;
-
-				for (int i=0; i < yBlocks.length; i++) {
-					for (int j=0; j < hitPoints.size(); j++) {
-						Block hpb = (Block)hitPoints.get(j);
-						//println("hpb x:" + hpb.getX() + " hpb y:" + hpb.getY());
-					
-						// is the block to test over a hitting point?
-						if (hpb.getX() == yBlocks[i].getX()) {
-							// initial seed vs setting closest to 9999 etc
-							if (closest == 0.0f) {
-								closest = hpb.getY() - yBlocks[i].getY();
-								println("ZERO SHIT");
-							}
-							if ((hpb.getY() - yBlocks[i].getY()) < closest ) {
-								closest = hpb.getY() - yBlocks[i].getY();
-								closestBlock = hpb;
-								println("CLOSEST" + hpb.getY() + "," + hpb.getX());
-							}
-						}
-					}
-				}
-				
-				// set x,y of piece minus offset of block						
-				currentPiece.setY(currentPiece.getY() + closest - blockSize);
-
-				// TODO: why do I have to do this instead of copyToGrid()?
-				timer = 0;		
-				
-			} else {
-				// nothing below, just drop
-				currentPiece.setY(playField[1].getY() - playField[0].getY() - blockSize);
-
-				// TODO: why do I have to do this instead of copyToGrid()?
-				timer = 0;
-			}
+			dropPiece();
 		}
 	}
 	
@@ -330,8 +255,12 @@ public class PlayState implements GameState {
 			rowsAffected.add(y);
 			//println("rows affected:" + y);
 
-			//deadGrid[x][y] = new Block(x*blockSize, y*blockSize, blockSize, copyBlock[i].getFillColor());
-			deadGrid[x][y] = new Block(x*blockSize + playField[0].getX(), y*blockSize + playField[0].getY(), blockSize, "#444444");
+			try{
+			deadGrid[x][y] = new Block(x*blockSize + playField[0].getX(), y*blockSize + playField[0].getY(), blockSize, copyBlock[i].getFillColor());
+			} catch (Exception e) {
+				println("!!!  HOLY ASS TEETH !!");
+				// catch nothing, I'm doing horrible shit here to test
+			}
 		}
 		
 		// mark filled rows (tetrises) into doneRows ArrayList
@@ -560,7 +489,6 @@ public class PlayState implements GameState {
 	}
 		
 	// background art etc
-	// TODO: offscreen drawing
 	void createGrid() {
 		
 		/*
@@ -619,5 +547,108 @@ public class PlayState implements GameState {
 		line(playField[1].getX(), playField[1].getY(), playField[0].getX(), playField[1].getY());	// bottom line		
 		line(playField[0].getX(), playField[1].getY(), playField[0].getX(), playField[0].getY());	// left line				
 		*/
+	}
+	
+	void dropPiece() {
+		// get greatest Y values
+		Block yBlocks[] = currentPiece.getMaxYBlocks();
+		int columns[] = new int[yBlocks.length];
+		for (int i=0; i < yBlocks.length; i++) {
+			columns[i] = (int)((yBlocks[i].getX() - playField[0].getX()) / blockSize);
+			//println (columns[i]);
+			
+			// store the least Y value for yStart later
+			println("YB:" + yBlocks[i].getX() + "," + yBlocks[i].getY());
+		}
+		
+		// search down columns with Y in current piece
+		Block hitPoint = null;
+		ArrayList hitPoints = new ArrayList();
+		
+		boolean hitSomething = false;
+
+		// what row to start on, doesn't matter which because grid is always below
+		float yStart = yBlocks[0].getY() / blockSize;
+		// row to end checking offset by playField
+		int rowEnd = (int)((playField[1].getY() - playField[0].getY()) / blockSize);
+		
+		// loop through columns and rows looking for pieces below
+		for (int col=0; col < columns.length; col++) {
+			for (int row=(int)yStart; row < rowEnd; row++) {
+				//println ("checking col:" + columns[col] + " row:" + row);
+				
+				// hit something
+				//try{
+				if(deadGrid[(int)columns[col]][row] != null) {
+					hitSomething = true;
+					
+					// this is a point of colision
+					hitPoint = deadGrid[(int)columns[col]][row];
+
+					// remember where we hit the grid
+					hitPoints.add(hitPoint);
+
+					println(hitPoint.getX() + "," + hitPoint.getY() + "hitsomething=" + hitSomething);
+				}
+			//} catch (Exception e) {
+			//	println("!!!!! hit something EXCEPTION !!!");
+			//	e.printStackTrace();
+			//}
+			}
+		}
+
+		if (hitSomething == true) {
+
+			// TODO: finds too many hit points, do reverse MaxYBlock function on deadgrid
+			float closest = 0.0f;
+			//Block closestBlock = null;
+
+			for (int i=0; i < yBlocks.length; i++) {
+				for (int j=0; j < hitPoints.size(); j++) {
+					Block hpb = (Block)hitPoints.get(j);
+					//println("hpb x:" + hpb.getX() + " hpb y:" + hpb.getY());
+				
+					// is the block to test over a hitting point?
+					if (hpb.getX() == yBlocks[i].getX()) {
+						// initial seed vs setting closest to 9999 etc
+						if (closest == 0.0f) {
+							closest = hpb.getY() - yBlocks[i].getY();
+							//println("ZERO SHIT");
+						}
+						if ((hpb.getY() - yBlocks[i].getY()) < closest ) {
+							closest = hpb.getY() - yBlocks[i].getY();
+							//closestBlock = hpb;
+							//println("CLOSEST" + hpb.getY() + "," + hpb.getX());
+						}
+					}
+				}
+			}
+			
+
+			// new Y pos is current pos minus offset plus closest distance of hit block
+			float newYPosition = currentPiece.getY() - playField[0].getY() + closest;
+			
+			println("new:" + newYPosition + " playY:" + playField[1].getY() + " yb" + currentPiece.getMaxY());
+			if (newYPosition >= playField[1].getY() - playField[0].getY()) {
+				float correction = newYPosition - (playField[1].getY() - playField[0].getY()) + blockSize;
+				newYPosition = newYPosition - correction; 
+			}
+			
+			// the piece might go through the floor, check it
+			//if (newYPosition >  )
+			// set x,y of piece minus offset of block
+			currentPiece.setY(newYPosition);
+
+			// TODO: why do I have to do this instead of copyToGrid()?
+			timer = 0;		
+			
+		} else {
+			// nothing below, just drop
+			currentPiece.setY(playField[1].getY() - playField[0].getY() - blockSize);
+
+			// TODO: why do I have to do this instead of copyToGrid()?
+			timer = 0;
+		}
+		
 	}
 }
