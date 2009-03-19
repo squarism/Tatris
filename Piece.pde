@@ -58,7 +58,11 @@ class Piece {
 		
 	}
 	
-	public boolean rotateCollide(float wallStart, float wallWidth) {
+	public boolean rotateCollideX(float wallStart, float wallWidth) {
+		return false;
+	}
+	
+	public boolean rotateCollideY(float roomStart, float roomWidth) {
 		return false;
 	}
 	

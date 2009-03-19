@@ -1,6 +1,8 @@
 public class PlayState implements GameState {
 	
 	Piece currentPiece;
+	Piece pieceBag[] = new Piece[7];		// a bag of 7 pieces
+	int pieceBagI;
 	float blockSize;
 	Block deadGrid[][];		// the grid are the blocks that are done on the field
 	int gridSizeX;
@@ -26,6 +28,10 @@ public class PlayState implements GameState {
 		
 		println("GRIDSIZE " + gridSizeX + " " + gridSizeY);
 		
+		pieceBag[0] = new LPiece(playField[1].getX()/2, 32.0f);
+		pieceBag[1] = new LPiece(playField[1].getX()/2, 32.0f);
+		pieceBagI = 0;
+		
 		currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -37,10 +43,7 @@ public class PlayState implements GameState {
 		Float playFieldHeight = playField[0].getY() - playField[1].getY();
 		
 		// create offscreen grid buffer image
-		createGrid();
-
-		// create offscreen overlay buffer image
-		createOverlay();
+		offscreenBuffers();
 		
 		// TWO LINE TEST
 		/*
@@ -84,7 +87,7 @@ public class PlayState implements GameState {
 		}*/
 		
 		// BUMPY ROTATE GRID TEST
-		
+		/*
 		String bumpy = "#FFAA00";
 		int tmp = 28;
 		for (int i=0; i < 15; i++) {
@@ -104,10 +107,10 @@ public class PlayState implements GameState {
 		}
 		tmp--;
 		deadGrid[7][tmp] = new Block(7*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
-		
+		*/
 		
 		// SINGLE GODDAMN BLOCK TEST -- THROUGH FLOOR BUG
-		//deadGrid[7][28] = new Block(7*blockSize + playField[0].getX(), 28*blockSize + playField[0].getY(), blockSize, "#FFAA00");
+		deadGrid[7][28] = new Block(7*blockSize + playField[0].getX(), 28*blockSize + playField[0].getY(), blockSize, "#FFAA00");
 		
 	}
 	
@@ -123,9 +126,10 @@ public class PlayState implements GameState {
 		
 		// this is the timed downward movement of the piece
 		if (timer <= 0) {
-			if (! gridCollideY(currentPiece.getBlocks())) {
+			if (! gridCollideY(currentPiece.getBlocks()) && currentPiece.getMaxY() <= playField[1].getY() - blockSize * 2) {
 				// won't hit, move down
 				currentPiece.setY(currentPiece.getY() + blockSize);
+				currentPiece.update();
 			} else {
 				// we hit something, deadgrid it
 				copyToGrid();
@@ -193,23 +197,21 @@ public class PlayState implements GameState {
 		if (keyCode == UP) {
 			// checks collision with grid
 			if (! currentPiece.rotateCollide(deadGrid, playField)) {
-				if (! currentPiece.rotateCollide(playField[0].getX(), playField[1].getX())) {
-					currentPiece.setRotation(currentPiece.getRotation() + radians(90));
+				// checks rotation collision with X boundries	
+				if (! currentPiece.rotateCollideX(playField[0].getX(), playField[1].getX())) {
+					// checks rotation collision with Y boundries
+					if (! currentPiece.rotateCollideY(playField[0].getY(), playField[1].getY())) {
+						currentPiece.setRotation(currentPiece.getRotation() + radians(90));
+						// update our piece so not to cause weird bugs with key events
+						currentPiece.update();
+					}
 				}
 			} 
-			// checks collision with walls			
-			//if (! currentPiece.rotateCollide(playField[0].getX(), playField[1].getX())) {
-			//	currentPiece.setRotation(currentPiece.getRotation() + radians(90));
-			//}
 		}
 
 		// down arrow key
 		if (keyCode == DOWN) {
-			// When player presses down, reset timer to make gameplay more
-			// predictable and smooth.  Pieces can fall "twice" otherwise.
-
-
-
+			// at bottom of play boundry
 			if (currentPiece.getMaxY() + blockSize < playField[1].getY()) {				
 				// this is down movement from keystroke
 				currentPiece.setY(currentPiece.getY() + blockSize);
@@ -219,14 +221,15 @@ public class PlayState implements GameState {
 			}
 			
 			// TODO: add difficulty timer
-			timer = 1;			
-
+			// When player presses down, reset timer to make gameplay more
+			// predictable and smooth.  Pieces can fall "twice" otherwise.
+			// Ordering of timer setting and copyToGrid() checks matter for gameplay feel.
+			timer = 1;
 			
 			// user pressed down, check for grid collide
 			if (gridCollideY(currentPiece.getBlocks())) {
 				println("collision on grid");
 				copyToGrid();
-
 			}
 			
 		}
@@ -241,11 +244,17 @@ public class PlayState implements GameState {
 
 	}
 	
+	
+	/*
+	copyToGrid() kills the current piece and moves it to the dead grid
+	it also scans the deadgrid for done rows, this takes many passes.
+	 */
 	void copyToGrid() {
+		// get a temp copy of the current piece to test with
 		Block copyBlock[] = currentPiece.getBlocks();
 		
+		// remember which rows are affected (used later)
 		ArrayList rowsAffected = new ArrayList();
-
 		for (int i=0; i < 4; i++) {
 			// TODO: replace with primatives
 			Float fx = (copyBlock[i].getX() - playField[0].getX()) / blockSize;
@@ -258,6 +267,7 @@ public class PlayState implements GameState {
 			try{
 			deadGrid[x][y] = new Block(x*blockSize + playField[0].getX(), y*blockSize + playField[0].getY(), blockSize, copyBlock[i].getFillColor());
 			} catch (Exception e) {
+				// TODO: this should never be hit
 				println("!!!  HOLY ASS TEETH !!");
 				// catch nothing, I'm doing horrible shit here to test
 			}
@@ -308,21 +318,7 @@ public class PlayState implements GameState {
 					}				
 				}
 			}
-
-
-			// using traditional for loop with iterator
-			//for(Iterator i = doneRows.iterator(); i.hasNext(); ) {
-			//	println("Iter:" + i.next());
-			//}
-			//println("---");
-
-				
-			// compress grid psuedocode:
-			// loop all
-			// if done
-			// loop back (ie: j ... 0)
-			// for each row, move blocks y+1 (down)
-
+			
 			// copy grid
 			Block compressedGrid[][] = new Block[gridSizeX][gridSizeY];
 			for (int i=0; i < cols; i++) {
@@ -346,15 +342,16 @@ public class PlayState implements GameState {
 					}
 				}
 				
+				// if empty is equal to cols then it's an empty row but there are lots of empty rows
+				// so check that the row is one that we cleared (in rowsAffected)
 				if (empty == cols && rowsAffected.indexOf(rowsI) > -1 ) {
 					emptyRows.add(rowsI);
-					println("empty index" + (rowsAffected.indexOf(rowsI) > -1));				
+					//println("empty index" + (rowsAffected.indexOf(rowsI) > -1));				
 				}
 				
 			}
 			
-			// this moves a row down
-			// need to repeat for every empty row
+			// this moves a row down, need to repeat for every empty row
 			for(Iterator i = emptyRows.iterator(); i.hasNext(); ) {
 
 				int rowNum = (Integer)i.next(); 
@@ -382,31 +379,29 @@ public class PlayState implements GameState {
 				}
 			}
 			
-			// using traditional for loop with iterator
-			//for(Iterator i = emptyRows.iterator(); i.hasNext(); ) {
-			//	println("Iter:" + i.next());
-			//}
-			//println("---");
-
 			// compressedGrid is flattened and removed of done rows
 			deadGrid = compressedGrid;
 		}
 
-		
-		
-		
-		/*
-		for (int i=0; i < doneRows.size(); i++) {
-			println(doneRows.get(i));
+		// do grab bag of pieces checks
+		// if we are on piece 7 then jumble the bag again
+		if (pieceBagI == pieceBag.length) {
+			// jumble
+			
+			// reset iterator
+			pieceBagI = 0;
 		}
-		*/
 		
+		// get piece from bag
+		// if piece doesn't collide with grid set currentPiece to got piece
+		// else set gameOver=true
 		
 		
 		// new piece HERE
 		currentPiece = new LPiece(playField[1].getX() / 2, 32.0f);
 		
 		// check for game over HERE
+		
 	}
 
 	// check for blocks below current piece				
@@ -488,43 +483,9 @@ public class PlayState implements GameState {
 
 	}
 		
-	// background art etc
-	void createGrid() {
+	void offscreenBuffers() {
 		
-		/*
-		background(25);
-		// grid lines
-		strokeWeight(1);
-  		stroke(0);
-		for (float i=playField[0].getX(); i <= playField[1].getX(); i+=blockSize) {
-			for (float j=playField[0].getY(); j <= playField[1].getY(); j+=blockSize) {
-		    	line(i, playField[0].getY(), i, playField[1].getY());
-		    	line(playField[0].getX(), j, playField[1].getX(), j);
-			}
-		}*/
-		
-		
-		grid = createGraphics( (int)(gridSizeX * blockSize) + 1, (int)(gridSizeY * blockSize) + 1, P2D);
-		grid.beginDraw();
-		grid.background(0);
-		grid.strokeWeight(1);
-		grid.stroke(10);
-		for (float i=0; i <= gridSizeX; i++) {
-			for (float j=0; j <= gridSizeY; j++) {
-		    	grid.line(i*blockSize, 0, i*blockSize, gridSizeY*blockSize);
-		    	grid.line(0, j*blockSize, gridSizeX*blockSize, j*blockSize);
-			}
-		}
-		grid.endDraw();
-		
-
-		
-	}
-	
-	// top most art
-	void createOverlay() {
-		
-		// +3 is for interior padding border
+		// border box around playfield, +3 is for interior padding border
 		int xlen = (int)(playField[1].getX() - playField[0].getX()) + 3;
 		int ylen = (int)(playField[1].getY() - playField[0].getY()) + 3;
 		overlay = createGraphics( xlen + 3, ylen + 3, P2D);
@@ -538,15 +499,19 @@ public class PlayState implements GameState {
 		overlay.line(0, ylen, 0, 0); // left line				
 		overlay.endDraw();
 		
-		// border box
-		/*
-		strokeWeight(3);
-  		stroke(255);
-		line(playField[0].getX(), playField[0].getY(), playField[1].getX(), playField[0].getY());	// top line
-		line(playField[1].getX(), playField[0].getY(), playField[1].getX(), playField[1].getY());	// right line
-		line(playField[1].getX(), playField[1].getY(), playField[0].getX(), playField[1].getY());	// bottom line		
-		line(playField[0].getX(), playField[1].getY(), playField[0].getX(), playField[0].getY());	// left line				
-		*/
+		// grid lines on playfield
+		grid = createGraphics( (int)(gridSizeX * blockSize) + 1, (int)(gridSizeY * blockSize) + 1, P2D);
+		grid.beginDraw();
+		grid.background(0);
+		grid.strokeWeight(1);
+		grid.stroke(10);
+		for (float i=0; i <= gridSizeX; i++) {
+			for (float j=0; j <= gridSizeY; j++) {
+		    	grid.line(i*blockSize, 0, i*blockSize, gridSizeY*blockSize);
+		    	grid.line(0, j*blockSize, gridSizeX*blockSize, j*blockSize);
+			}
+		}
+		grid.endDraw();
 	}
 	
 	void dropPiece() {
@@ -577,8 +542,6 @@ public class PlayState implements GameState {
 			for (int row=(int)yStart; row < rowEnd; row++) {
 				//println ("checking col:" + columns[col] + " row:" + row);
 				
-				// hit something
-				//try{
 				if(deadGrid[(int)columns[col]][row] != null) {
 					hitSomething = true;
 					
@@ -590,10 +553,6 @@ public class PlayState implements GameState {
 
 					println(hitPoint.getX() + "," + hitPoint.getY() + "hitsomething=" + hitSomething);
 				}
-			//} catch (Exception e) {
-			//	println("!!!!! hit something EXCEPTION !!!");
-			//	e.printStackTrace();
-			//}
 			}
 		}
 
@@ -628,26 +587,29 @@ public class PlayState implements GameState {
 			// new Y pos is current pos minus offset plus closest distance of hit block
 			float newYPosition = currentPiece.getY() - playField[0].getY() + closest;
 			
-			println("new:" + newYPosition + " playY:" + playField[1].getY() + " yb" + currentPiece.getMaxY());
-			if (newYPosition >= playField[1].getY() - playField[0].getY()) {
+			// the piece might go through the floor, check it
+			//println("new:" + newYPosition + " playY:" + playField[1].getY() + " yb" + currentPiece.getMaxY());
+			if (newYPosition > playField[1].getY() - playField[0].getY()) {
 				float correction = newYPosition - (playField[1].getY() - playField[0].getY()) + blockSize;
 				newYPosition = newYPosition - correction; 
 			}
 			
-			// the piece might go through the floor, check it
-			//if (newYPosition >  )
 			// set x,y of piece minus offset of block
 			currentPiece.setY(newYPosition);
+			currentPiece.update();
 
 			// TODO: why do I have to do this instead of copyToGrid()?
-			timer = 0;		
+			//timer = 0;
+			copyToGrid();		
 			
 		} else {
 			// nothing below, just drop
 			currentPiece.setY(playField[1].getY() - playField[0].getY() - blockSize);
+			currentPiece.update();
 
 			// TODO: why do I have to do this instead of copyToGrid()?
-			timer = 0;
+			//timer = 0;
+			copyToGrid();
 		}
 		
 	}
