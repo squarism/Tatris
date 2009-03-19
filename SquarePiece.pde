@@ -1,42 +1,125 @@
 class SquarePiece extends Piece {
 		
 	/*
-			##              
-	    	## 
+		## 01             
+	    	## 23 
 			990000  (red)
 	*/
+
+	float offsetX[] = new float[4];
+	float offsetY[] = new float[4];
+
 		
 	public SquarePiece(float x, float y) {
-		blocks[0] = new Block(x,y,blockSize,"#AA1111");
-		blocks[1] = new Block(x,y-blockSize,blockSize,"#990000");
-		blocks[2] = new Block(x+blockSize,y,blockSize,"#990000");
-		blocks[3] = new Block(x+blockSize,y-blockSize,blockSize,"#990000");
+
+	// offsets are relative to pivotpoint (center)
+	// block numbers are in ASCII art at top
+	// * is pivot point	
+
+
+		super.setX(x);
+		super.setY(y);
+				
+		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#AA1111");
+		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#AA1111");
+		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#AA1111");
+		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#AA1111");
+
+                // call update because our offsets aren't set yet in constructor above
+		update();
+	}
+			
+	public void setRotation(float angle) {
+                // square doesn't rotate        
+  		//return false;
 	}
 	
+	// TODO: refactor cleaner
+	public boolean rotateCollideX(float wallStart, float wallWidth) {
+                // square doesn't rotate        
+  		return false;
+	}
 	
-	// blocks move together as one set of blocks, offset by shape pattern
+	public boolean rotateCollideY(float roomStart, float roomWidth) {
+                // square doesn't rotate        
+  		return false;
+	}
+	
+	public boolean rotateCollide(Block deadGrid[][], Point2d playField[]) {
+                // square doesn't rotate
+  		return false;
+	}
+	
+	/* Call this whenever moving or rotating */
+	public void update() {
+
+                offsetX[0] = 0;
+                offsetY[0] = 0;
+                
+                offsetX[1] = sin(rotation + radians(90)) * blockSize;
+                offsetY[1] = cos(rotation + radians(270)) * blockSize;
+  
+  		offsetX[2] = sin(rotation + radians(180)) * blockSize;
+		offsetY[2] = cos(rotation + radians(0)) * blockSize;
+
+  		offsetX[3] = sin(rotation + radians(135)) * blockSize;
+		offsetY[3] = cos(rotation + radians(315)) * blockSize;
+		
+		blocks[0].setX(super.pivotPoint.getX() + offsetX[0]);
+		blocks[0].setY(super.pivotPoint.getY() + offsetY[0]);
+		
+		blocks[1].setX(super.pivotPoint.getX() + offsetX[1]);
+		blocks[1].setY(super.pivotPoint.getY() + offsetY[1]);
+
+		blocks[2].setX(super.pivotPoint.getX() + offsetX[2]);
+		blocks[2].setY(super.pivotPoint.getY() + offsetY[2]);
+
+		blocks[3].setX(super.pivotPoint.getX() + offsetX[3]);
+		blocks[3].setY(super.pivotPoint.getY() + offsetY[3]);
+
+		// rounding to line up with grid
+		// TODO: better way?
+		super.round(blocks[0]);
+		super.round(blocks[1]);
+		super.round(blocks[2]);
+		super.round(blocks[3]);
+		
+	}
+	
+	// setx with a wall in mind for collision detect
+	public void setX(float x, float wall) {
+
+		boolean wallCollide = false;
+		
+		float xVector = 0;
+		xVector = x-pivotPoint.getX();
+
+		for (int i=0; i < 4; i++) {
+			
+			// we're going right
+			if (xVector > 0 && blocks[i].getX() + xVector >= wall) {
+				//println("we're going right");
+				wallCollide = true;
+			}
+			// we're going left
+			if (xVector < 0 && blocks[i].getX() + xVector < wall) {
+				//println("we're going left");
+				wallCollide = true;
+			}
+		}
+		// we didn't hit a wall so set x
+		if (!wallCollide){
+			pivotPoint.setX(x);
+		}
+	}
+	
+	// set x unconditionally
 	public void setX(float x) {
-		blocks[0].setX(x);
-		blocks[1].setX(x);
-		blocks[2].setX(x+blockSize);
-		blocks[3].setX(x+blockSize);
+		pivotPoint.setX(x);
 	}
 	
 	public void setY(float y) {
-		blocks[0].setY(y);
-		blocks[1].setY(y-blockSize);
-		blocks[2].setY(y);
-		blocks[3].setY(y-blockSize);
+		pivotPoint.setY(y);
 	}
 	
-	// return arbitrary block as center of piece
-	public float getX() {
-		return blocks[0].getX();
-	}
-
-	// return arbitrary block as center of piece
-	public float getY() {
-		return blocks[0].getY();
-	}
-
 }

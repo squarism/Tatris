@@ -2,3 +2,7 @@ Tatris-090316a
 --------------
 Fixed weird bug where pieces would be able to be rotated off boundry and play field.  Had to call update() on piece after rotations.
 
+Tatris-090317a
+--------------
+Game over check working.
+Implemented piece bag for better randomness.

@@ -19,8 +19,8 @@ public class PieceBag {
 
 	void initPieces() {
 		pieceBag[0] = new LPiece(this.x, this.y);
-		pieceBag[1] = new LPiece(32, 32);
-		pieceBag[2] = new LPiece(64, 32);
+		pieceBag[1] = new SquarePiece(32, 32);
+		pieceBag[2] = new TPiece(64, 32);
 		pieceBag[3] = new LPiece(96, 32);
 		pieceBag[4] = new LPiece(128, 32);
 		pieceBag[5] = new LPiece(144, 32);

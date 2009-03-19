@@ -118,7 +118,7 @@ class LPiece extends Piece {
 		// are we near the bottom?
 		if (super.pivotPoint.getY() < roomWidth / 2) {
 			if (super.pivotPoint.getY() + blockSize * 3 < roomWidth) {
-				println("nowhere close near bottom");
+				// we are nowhere near the bottom
 				return false;
 			} else {
 				float tmpRotation = rotation + 90.0f;

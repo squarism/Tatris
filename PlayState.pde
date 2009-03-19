@@ -1,6 +1,7 @@
 public class PlayState implements GameState {
 	
 	Piece currentPiece;
+	Piece nextPiece;
 	PieceBag pieceBag;
 	int pieceBagI;
 	float blockSize;
@@ -13,6 +14,7 @@ public class PlayState implements GameState {
 	
 	PGraphics grid;		// offscreen buffer for grid lines
 	PGraphics overlay;	// offscreen buffer for overlay (border etc)
+	PGraphics sidebar;	// score, next piece etc
 	
 	public PlayState() {
 		gameOver = false;	
@@ -29,7 +31,10 @@ public class PlayState implements GameState {
 		println("GRIDSIZE " + gridSizeX + " " + gridSizeY);
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
-		currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
+		//currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
+		currentPiece = new TPiece(playField[1].getX()/2, 32.0f);
+		//currentPiece = pieceBag.getPiece();
+		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
 		
@@ -157,8 +162,10 @@ public class PlayState implements GameState {
 			}
 		}
 
-		//drawOverlay();
 		image(overlay, playField[0].getX() - 2, playField[0].getY() - 2);
+		
+
+		image(sidebar, playField[1].getX(), blockSize);
 		
 		fill(255);
 		text("fps: " + Math.round(fps * .1)/.1,8,8);
@@ -380,16 +387,13 @@ public class PlayState implements GameState {
 			deadGrid = compressedGrid;
 		}
 
-		// do grab bag of pieces checks
-		// get piece from bag
-		Piece newPiece = pieceBag.getPiece();
-		
-		// if piece doesn't collide with grid set currentPiece to got piece
-		// else set gameOver=true
-		Block newPieceBlocks[] = newPiece.getBlocks();
+		// test field against nextPiece spawn point
+		Block newPieceBlocks[] = nextPiece.getBlocks();
 		for (int i=0; i < 4; i++) {
 			int npx = (int)((newPieceBlocks[i].getX() - playField[0].getX()) / blockSize);
 			int npy = (int)((newPieceBlocks[i].getY() - playField[0].getY()) / blockSize);
+
+			// otherwise, can't spawn, game is over
 			if (deadGrid[npx][npy] != null) {
 				println("GAME OVER MAN");
 				gameOver=true;
@@ -401,9 +405,9 @@ public class PlayState implements GameState {
 		// new piece HERE
 		//currentPiece = new LPiece(playField[1].getX() / 2, 32.0f);
 		//currentPiece = pieceBag.getPiece();
-		currentPiece = newPiece;
-		
-		// check for game over HERE
+		// if piece doesn't collide with grid set currentPiece to got piece
+		currentPiece = nextPiece;
+		nextPiece = pieceBag.getPiece();
 		
 	}
 
@@ -492,7 +496,6 @@ public class PlayState implements GameState {
 		int xlen = (int)(playField[1].getX() - playField[0].getX()) + 3;
 		int ylen = (int)(playField[1].getY() - playField[0].getY()) + 3;
 		overlay = createGraphics( xlen + 3, ylen + 3, P2D);
-		
 		overlay.beginDraw();
 		overlay.strokeWeight(1);
   		overlay.stroke(255);
@@ -515,6 +518,21 @@ public class PlayState implements GameState {
 			}
 		}
 		grid.endDraw();
+		
+		xlen = (int)(width - playField[1].getX());
+		ylen = (int)(playField[1].getY());
+		sidebar = createGraphics(xlen, ylen, P2D);
+		sidebar.beginDraw();
+		sidebar.strokeWeight(1);
+		sidebar.stroke(255);
+		sidebar.fill(0);
+		sidebar.rect(blockSize, playField[0].getY(), blockSize * 5, blockSize * 5);
+		sidebar.rect(blockSize, 0, blockSize * 5, blockSize);
+		sidebar.textFont(crackedFont, 20);
+		sidebar.fill(255);
+		sidebar.text("NEXT", (blockSize * 5) / 2 + blockSize - (textWidth("NEXT") / 2), playField[0].getY());
+		sidebar.endDraw();
+		
 	}
 	
 	void dropPiece() {
