@@ -4,14 +4,16 @@ NESJoystick nes;
 
 ArrayList pieces = new ArrayList();
 
-Piece lpiece = new LPiece(32.0f,128.0f);
-Piece lpiece2 = new LPiece(96.0f,128.0f);
-Piece lpiece3 = new LPiece(160.0f,128.0f);
-Piece lpiece4 = new LPiece(224.0f,128.0f);
+GameState gameState;
 
-float blockSize=16.0f;
+// we keep track of the time elapsed between frames so we can achieve smooth animation
+int now;   // the current time
+int then;  // the time from the last frame
+float fps; // frames per second
 
-GameState gameState = new PlayState();
+PFont smallFont;	// pixel font
+PFont regFont;		// readable font
+PFont crackedFont;	// huge font
 
 void setup(){ 
   //setup game display area, background colour and framerate 
@@ -23,8 +25,12 @@ void setup(){
   //rectMode(CENTER); 
   smooth();
   //strokeCap(ROUND);
+	smallFont = loadFont("04b-08-8.vlw");
+	crackedFont = loadFont("Cracked-48.vlw");
+	regFont = loadFont("MyriadPro-Regular-12.vlw");
+	textFont(smallFont,8);
 
-  pieces.add(new LPiece(225.0f,315.0f));
+  //pieces.add(new LPiece(225.0f,315.0f));
   //pieces.add(new SquarePiece(125.0f,115.0f));
   //pieces.add(new SPiece(55.0f,75.0f));
   //pieces.add(new ZPiece(55.0f,445.0f));
@@ -40,6 +46,7 @@ void setup(){
    	pieces.add(new Piece(250,470,"t"));
    	*/
 
+	gameState = new PlayState();
   nes = new NESJoystick(this);
 
 
@@ -50,34 +57,46 @@ void setup(){
   //println(((Piece)pieces.get(0)).getY());
 } 
 
+// This handy drawing routine draws text centered horizontally on the screen
+void textCentered(String txt, float y, color textColor, color borderColor) {
+  float x = width/2-textWidth(txt)/2;
+  text(txt, x, y);
+}
+
 // TODO: framerate independant drawing
 void draw(){ 
-  background(25);
+	
+  // note how much time has passed since our last loop
+  then = now;
 
-	strokeWeight(3);
-  // fucking grid
-  for (int i=0; i < height; i++) {
-    if ( (i%16) == 0) {
-      line(i,0,i,height);
-      line(0,i,width,i);
-    }
-  } 
-strokeWeight(1);
+  float elapsed = 0;
 
-	lpiece.draw();
-	lpiece2.setRotation(radians(90));
-	lpiece2.draw();
-	lpiece3.setRotation(radians(180));
-	lpiece3.draw();
-	lpiece4.setRotation(radians(270));
-	lpiece4.draw();
+  // wait for at least 1/100th of a second to pass
+  while( elapsed < 1.0/100.0 ) {
+    now = millis();
 
+    // compute elapsed time in seconds
+    elapsed = (now - then) / 1000.0f;
+  }
+
+  // compute frames per second by averaging over the past + current
+  fps = .95*fps + .05/elapsed;
+
+
+
+  // slow the game down if the computer can't keep up a reasonable frame rate
+  // by limiting the elapsed time to 1/12th of a second (12fps)
+  if( elapsed > 1.0/12.0 ) elapsed = 1.0/12.0;	
+	
+	gameState.update(elapsed);
+	gameState.paint();
+	gameState = gameState.nextState();
 
   //((Piece)pieces.get(0)).setX(nes.getTotalY() + width/2);
   //((Piece)pieces.get(0)).setY(nes.getTotalX() + height/2);
 
 
-
+/*
   if (nes.aButtonPressed()) {
 
 	lpiece.setRotation(lpiece.getRotation() + radians(90));
@@ -91,7 +110,7 @@ strokeWeight(1);
     //Piece tmp = (Piece)pieces.get(0);
     //tmp.setRotation(radians(270));
   }	
-
+*/
 
 /*
   for (int i=0; i < pieces.size(); i++) {
@@ -104,22 +123,7 @@ strokeWeight(1);
 }
 
 void keyPressed() {
-	if (keyCode == LEFT) {
-		lpiece.setX(lpiece.getX() - blockSize);
-	}
-	
-	if (keyCode == RIGHT) {
-		lpiece.setX(lpiece.getX() + blockSize);
-	}
-	
-	if (keyCode == UP) {
-		lpiece.setRotation(lpiece.getRotation() + radians(90));
-	}
-	
-	if (keyCode == DOWN) {
-		lpiece.setY(lpiece.getY() + blockSize);
-	}
-	
+	gameState.keyPressed();
 }
 
 /* joystick control

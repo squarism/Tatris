@@ -100,8 +100,33 @@ class LPiece extends Piece {
 		blocks[2].setX(x);
 		blocks[3].setX(x+blockSize);
 		*/
-		pivotPoint.setX(x);
-		update();
+		
+		boolean wallCollide = false;
+		
+		float xVector = 0;
+		xVector = x-pivotPoint.getX();
+
+		/*
+		} else if (pivotPoint - x > 0) { 
+			moveDifference = pivotPoint - x;
+		} else {
+			moveDifference = 0;
+		}*/
+		
+		
+		
+		for (int i=0; i < 4; i++) {
+			if (blocks[i].getX() + xVector >= width) {
+				wallCollide = true;
+			}
+			if (blocks[i].getX() + xVector < 0) {
+				wallCollide = true;
+			}
+		}
+		if (!wallCollide){
+				pivotPoint.setX(x);
+				update();
+			}
 	}
 	
 	public void setY(float y) {
