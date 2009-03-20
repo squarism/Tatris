@@ -17,7 +17,7 @@ PFont crackedFont;	// huge font
 
 void setup(){ 
   	//setup game display area, background colour and framerate 
-  	size(384, 512); 
+  	size(320, 496); 
   	frameRate(60);
   	fill(0); 
   	//strokeWeight(3);	// keep an odd number for best look

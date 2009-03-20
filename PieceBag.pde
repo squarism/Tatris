@@ -32,7 +32,7 @@ public class PieceBag {
 	//pieceBagI = 0;
 	
 	public void jumble() {
-		println("JUMBLE");
+		//println("JUMBLE");
 		Random rng = new Random();   // i.e., java.util.Random.
         int n = pieceBag.length;        // The number of items left to shuffle (loop invariant).
         while (n > 1) 
