@@ -52,26 +52,25 @@ class TPiece extends Piece {
 				float tmpRotation = rotation + 90.0f;
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
-				/*
+				
 				tmpOffsetX[0] = 0;
 				tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
 				tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
 				tmpOffsetX[3] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
-				*/
 
-				if (super.pivotPoint.getX()+tmpOffsetX[0] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[0] >= wallWidth) {
 					//println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[1] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[1] >= wallWidth) {
 					//println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[2] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[2] >= wallWidth) {
 					//println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[3] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[3] >= wallWidth) {
 					//println("denied 3");
 					return true;
 				}
@@ -88,25 +87,25 @@ class TPiece extends Piece {
 				float tmpRotation = rotation + 90.0f;
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
-				/*
+				
 				tmpOffsetX[0] = 0;
 				tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
 				tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
 				tmpOffsetX[3] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
-				*/
-				if (super.pivotPoint.getX()+offsetX[0] < wallStart - blockSize/2) {
+				
+				if (super.pivotPoint.getX() + offsetX[0] < wallStart - blockSize/2) {
 					//println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+offsetX[1] < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX() + offsetX[1] < wallStart - blockSize/2) {
 					//println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+offsetX[2] < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX() + offsetX[2] < wallStart - blockSize/2) {
 					//println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+offsetX[3] < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX() + offsetX[3] < wallStart - blockSize/2) {
 					//println("denied 3");
 					return true;
 				}
@@ -128,26 +127,26 @@ class TPiece extends Piece {
 				float tmpRotation = rotation + 90.0f;
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
-				/*
+				
 				tmpOffsetX[0] = 0;
 				tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
 				tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
 				tmpOffsetX[3] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
-				*/
+				
 
-				if (super.pivotPoint.getX()+offsetX[0] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[0] >= roomWidth) {
 					//println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+offsetX[1] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[1] >= roomWidth) {
 					//println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+offsetX[2] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[2] >= roomWidth) {
 					//println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+offsetX[3] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[3] >= roomWidth) {
 					//println("denied 3");
 					return true;
 				}
@@ -199,7 +198,7 @@ class TPiece extends Piece {
 			float tmpOffsetX[] = new float[4];
 			float tmpOffsetY[] = new float[4];
 			
-			/*
+			
 			tmpOffsetX[0] = 0;
 			tmpOffsetX[1] = sin(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
 			tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
@@ -209,15 +208,15 @@ class TPiece extends Piece {
 			tmpOffsetY[1] = cos(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
 			tmpOffsetY[2] = cos(tmpRotation + radians(0)) * blockSize;
 			tmpOffsetY[3] = cos(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
-			*/
+			
 			
 			int testX;
 			int testY;
 			// TODO: take out hit?
 			boolean hit = false;
 			for (int i=0; i<4; i++) {
-				testX = (int) ((super.pivotPoint.getX()+offsetX[i]) / blockSize);
-				testY = (int) ((super.pivotPoint.getY()+offsetY[i]) / blockSize);
+				testX = (int) ((super.pivotPoint.getX() + tmpOffsetX[i]) / blockSize);
+				testY = (int) ((super.pivotPoint.getY() + tmpOffsetY[i]) / blockSize);
 				
 				// make sure we don't test past our bounds
 				if (testX < gridSizeX && testY < gridSizeY) {		
