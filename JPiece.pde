@@ -1,23 +1,26 @@
-class ZPiece extends Piece {
+class JPiece extends Piece {
 	
-	/*	
-			 #      1             
-			##     02
-	 		#      3
-			336633  (green)
+	/*
+			 #      3
+			 #     *2         
+			##     10
+			663300 (brown)
 	*/
 	
+	// offsets are relative to pivotpoint (center)
+	// block numbers are in ASCII art at top
+	// * is pivot point	
 	float offsetX[] = new float[4];
 	float offsetY[] = new float[4];
 
-	public ZPiece(float x, float y) {	
+	public JPiece(float x, float y) {	
 		super.setX(x);
 		super.setY(y);
 				
-		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#336633");
-		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#336633");
-		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#336633");
-		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#336633");
+		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#663300");
+		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#663300");
+		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#663300");
+		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#663300");
 
 		update();
 
@@ -30,14 +33,7 @@ class ZPiece extends Piece {
 	}
 			
 	public void setRotation(float angle) {
-		println(angle);
-
-		
-		if(angle >= radians(0.0f) && angle <= radians(90.0f)) {
-			this.rotation = radians(90.0f);
-		} else if (angle >= radians(90.0f) && angle <= radians(180.0f)) {
-			this.rotation = radians(0.0f);
-		}
+		this.rotation = angle;
 
 		float ppx = pivotPoint.getX();		
 		float ppy = pivotPoint.getY();
@@ -55,10 +51,10 @@ class ZPiece extends Piece {
 				float tmpRotation = rotation + 90.0f;
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
-				tmpOffsetX[0] = 0;
-				tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[0] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[1] = sin(tmpRotation + radians(180)) * blockSize;
 				tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
 
 				if (super.pivotPoint.getX()+tmpOffsetX[0] >= wallWidth) {
 					//println("denied 0");
@@ -89,10 +85,11 @@ class ZPiece extends Piece {
 				float tmpRotation = rotation + 90.0f;
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
-				tmpOffsetX[0] = 0;
-				tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[0] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[1] = sin(tmpRotation + radians(180)) * blockSize;
 				tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
+
 				if (super.pivotPoint.getX()+tmpOffsetX[0] < wallStart - blockSize/2) {
 					//println("denied 0");
 					return true;
@@ -127,10 +124,10 @@ class ZPiece extends Piece {
 				float tmpRotation = rotation + 90.0f;
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
-				tmpOffsetX[0] = 0;
-				tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[0] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
+				tmpOffsetX[1] = sin(tmpRotation + radians(180)) * blockSize;
 				tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
 
 				if (super.pivotPoint.getX()+tmpOffsetX[0] >= roomWidth) {
 					//println("denied 0");
@@ -195,15 +192,15 @@ class ZPiece extends Piece {
 			float tmpRotation = rotation + 90.0f;
 			float tmpOffsetX[] = new float[4];
 			float tmpOffsetY[] = new float[4];
-			tmpOffsetX[0] = 0;
-			tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
+			tmpOffsetX[0] = sin(tmpRotation + radians(135)) * (blockSize + (blockSize / 2));
+			tmpOffsetX[1] = sin(tmpRotation + radians(180)) * blockSize;
 			tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-			tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+			tmpOffsetX[3] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
 			
-			tmpOffsetY[0] = 0;
-			tmpOffsetY[1] = cos(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
+			tmpOffsetY[0] = cos(tmpRotation + radians(315)) * (blockSize + (blockSize / 2));
+			tmpOffsetY[1] = cos(tmpRotation + radians(0)) * blockSize;
 			tmpOffsetY[2] = cos(tmpRotation + radians(270)) * blockSize;
-			tmpOffsetY[3] = cos(tmpRotation + radians(0)) * blockSize;
+			tmpOffsetY[3] = cos(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
 			
 			
 			int testX;
@@ -233,19 +230,19 @@ class ZPiece extends Piece {
 	
 	/* Call this whenever moving or rotating */
 	public void update() {
+		
+		offsetX[0] = sin(rotation + radians(135)) * (blockSize + (blockSize / 2));
+		offsetY[0] = cos(rotation + radians(315)) * (blockSize + (blockSize / 2));
 
-		offsetX[0] = 0;
-		offsetY[0] = 0;
-
-		offsetX[1] = sin(rotation + radians(45)) * (blockSize + (blockSize / 2));
-		offsetY[1] = cos(rotation + radians(225)) * (blockSize + (blockSize / 2));
+		offsetX[1] = sin(rotation + radians(180)) * blockSize;
+		offsetY[1] = cos(rotation + radians(0)) * blockSize;
 
 		offsetX[2] = sin(rotation + radians(90)) * blockSize;
 		offsetY[2] = cos(rotation + radians(270)) * blockSize;
 
-		offsetX[3] = sin(rotation + radians(180)) * blockSize;
-		offsetY[3] = cos(rotation + radians(0)) * blockSize;
-				
+		offsetX[3] = sin(rotation + radians(45)) * (blockSize + (blockSize / 2));
+		offsetY[3] = cos(rotation + radians(225)) * (blockSize + (blockSize / 2));
+		
 		blocks[0].setX(super.pivotPoint.getX() + offsetX[0]);
 		blocks[0].setY(super.pivotPoint.getY() + offsetY[0]);
 		

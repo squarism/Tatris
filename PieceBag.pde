@@ -19,12 +19,12 @@ public class PieceBag {
 
 	void initPieces() {
 		pieceBag[0] = new LPiece(this.x, this.y);
-		pieceBag[1] = new SquarePiece(32, 32);
-		pieceBag[2] = new TPiece(64, 32);
-		pieceBag[3] = new LPiece(96, 32);
-		pieceBag[4] = new LPiece(128, 32);
-		pieceBag[5] = new LPiece(144, 32);
-		pieceBag[6] = new LPiece(160, 32);
+		pieceBag[1] = new SquarePiece(this.x, this.y);
+		pieceBag[2] = new TPiece(this.x, this.y);
+		pieceBag[3] = new SPiece(this.x, this.y);
+		pieceBag[4] = new ZPiece(this.x, this.y);
+		pieceBag[5] = new IPiece(this.x, this.y);
+		pieceBag[6] = new JPiece(this.x, this.y);
 	}
 	
 	//pieceBag[0] = new LPiece(playField[1].getX()/2, 32.0f);

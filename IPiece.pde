@@ -1,23 +1,24 @@
-class ZPiece extends Piece {
+class IPiece extends Piece {
 	
-	/*	
-			 #      1             
-			##     02
-	 		#      3
-			336633  (green)
+	/*
+			 #        1         
+			 #        0          
+			 #        2          
+			 #	 	  3
+			 FF6600   (orange)	
 	*/
 	
 	float offsetX[] = new float[4];
 	float offsetY[] = new float[4];
 
-	public ZPiece(float x, float y) {	
+	public IPiece(float x, float y) {	
 		super.setX(x);
 		super.setY(y);
 				
-		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#336633");
-		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#336633");
-		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#336633");
-		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#336633");
+		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#FF6600");
+		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#FF6600");
+		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#FF6600");
+		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#FF6600");
 
 		update();
 
@@ -52,31 +53,31 @@ class ZPiece extends Piece {
 				//println("nowhere close near east wall");
 				return false;
 			} else {
-				float tmpRotation = rotation + 90.0f;
+				float tmpRotation = rotation + radians(90.0f);
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
 				tmpOffsetX[0] = 0;
-				tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
-				tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[1] = sin(tmpRotation + radians(0)) * blockSize;
+				tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize * 2;
 
-				if (super.pivotPoint.getX()+tmpOffsetX[0] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[0] >= wallWidth) {
 					//println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[1] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[1] >= wallWidth) {
 					//println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[2] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[2] >= wallWidth) {
 					//println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[3] >= wallWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[3] >= wallWidth) {
 					//println("denied 3");
 					return true;
 				}
-				//println("allowed west");
+				//println("allowed east");
 				return false;
 			}
 			
@@ -86,30 +87,30 @@ class ZPiece extends Piece {
 				//println("nowhere close near west wall");
 				return false;
 			} else {
-				float tmpRotation = rotation + 90.0f;
+				float tmpRotation = rotation + radians(90.0f);
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
 				tmpOffsetX[0] = 0;
-				tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
-				tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
-				if (super.pivotPoint.getX()+tmpOffsetX[0] < wallStart - blockSize/2) {
+				tmpOffsetX[1] = sin(tmpRotation + radians(0)) * blockSize;
+				tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize * 2;
+				if (super.pivotPoint.getX() + tmpOffsetX[0] < wallStart - blockSize/2) {
 					//println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[1] < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX() + tmpOffsetX[1] < wallStart - blockSize/2) {
 					//println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[2] < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX() + tmpOffsetX[2] < wallStart - blockSize/2) {
 					//println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[3] < wallStart - blockSize/2) {
+				if (super.pivotPoint.getX() + tmpOffsetX[3] < wallStart - blockSize/2) {
 					//println("denied 3");
 					return true;
 				}
-				//println("allowed east");
+				//println("allowed west");
 				return false;
 			}	
 		}
@@ -124,27 +125,27 @@ class ZPiece extends Piece {
 				// we are nowhere near the bottom
 				return false;
 			} else {
-				float tmpRotation = rotation + 90.0f;
+				float tmpRotation = rotation + radians(90.0f);
 				float tmpOffsetX[] = new float[4];
 				float tmpOffsetY[] = new float[4];
 				tmpOffsetX[0] = 0;
-				tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
-				tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[1] = sin(tmpRotation + radians(0)) * blockSize;
+				tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
+				tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize * 2;
 
-				if (super.pivotPoint.getX()+tmpOffsetX[0] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[0] >= roomWidth) {
 					//println("denied 0");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[1] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[1] >= roomWidth) {
 					//println("denied 1");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[2] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[2] >= roomWidth) {
 					//println("denied 2");
 					return true;
 				} 
-				if (super.pivotPoint.getX()+tmpOffsetX[3] >= roomWidth) {
+				if (super.pivotPoint.getX() + tmpOffsetX[3] >= roomWidth) {
 					//println("denied 3");
 					return true;
 				}
@@ -192,18 +193,18 @@ class ZPiece extends Piece {
 		
 		//println("NEAR ANYTHING:" + nearAnything);
 		if (nearAnything) {
-			float tmpRotation = rotation + 90.0f;
+			float tmpRotation = rotation + radians(90.0f);
 			float tmpOffsetX[] = new float[4];
 			float tmpOffsetY[] = new float[4];
 			tmpOffsetX[0] = 0;
-			tmpOffsetX[1] = sin(tmpRotation + radians(45)) * (blockSize + (blockSize / 2));
-			tmpOffsetX[2] = sin(tmpRotation + radians(90)) * blockSize;
-			tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize;
+			tmpOffsetX[1] = sin(tmpRotation + radians(0)) * blockSize;
+			tmpOffsetX[2] = sin(tmpRotation + radians(180)) * blockSize;
+			tmpOffsetX[3] = sin(tmpRotation + radians(180)) * blockSize * 2;
 			
 			tmpOffsetY[0] = 0;
-			tmpOffsetY[1] = cos(tmpRotation + radians(225)) * (blockSize + (blockSize / 2));
-			tmpOffsetY[2] = cos(tmpRotation + radians(270)) * blockSize;
-			tmpOffsetY[3] = cos(tmpRotation + radians(0)) * blockSize;
+			tmpOffsetY[1] = cos(tmpRotation + radians(180)) * blockSize;
+			tmpOffsetY[2] = cos(tmpRotation + radians(0)) * blockSize;
+			tmpOffsetY[3] = cos(tmpRotation + radians(0)) * blockSize * 2;
 			
 			
 			int testX;
@@ -237,14 +238,14 @@ class ZPiece extends Piece {
 		offsetX[0] = 0;
 		offsetY[0] = 0;
 
-		offsetX[1] = sin(rotation + radians(45)) * (blockSize + (blockSize / 2));
-		offsetY[1] = cos(rotation + radians(225)) * (blockSize + (blockSize / 2));
+		offsetX[1] = sin(rotation + radians(0)) * blockSize;
+		offsetY[1] = cos(rotation + radians(180)) * blockSize;
 
-		offsetX[2] = sin(rotation + radians(90)) * blockSize;
-		offsetY[2] = cos(rotation + radians(270)) * blockSize;
+		offsetX[2] = sin(rotation + radians(180)) * blockSize;
+		offsetY[2] = cos(rotation + radians(0)) * blockSize;
 
-		offsetX[3] = sin(rotation + radians(180)) * blockSize;
-		offsetY[3] = cos(rotation + radians(0)) * blockSize;
+		offsetX[3] = sin(rotation + radians(180)) * (blockSize * 2);
+		offsetY[3] = cos(rotation + radians(0)) * (blockSize * 2);
 				
 		blocks[0].setX(super.pivotPoint.getX() + offsetX[0]);
 		blocks[0].setY(super.pivotPoint.getY() + offsetY[0]);

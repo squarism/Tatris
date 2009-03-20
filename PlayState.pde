@@ -32,8 +32,8 @@ public class PlayState implements GameState {
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
 		//currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
-		currentPiece = new TPiece(playField[1].getX()/2, 32.0f);
-		//currentPiece = pieceBag.getPiece();
+		//currentPiece = new JPiece(playField[1].getX()/2, 32.0f);
+		currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -538,6 +538,7 @@ public class PlayState implements GameState {
 	void dropPiece() {
 		// get greatest Y values
 		Block yBlocks[] = currentPiece.getMaxYBlocks();
+		
 		int columns[] = new int[yBlocks.length];
 		for (int i=0; i < yBlocks.length; i++) {
 			columns[i] = (int)((yBlocks[i].getX() - playField[0].getX()) / blockSize);
@@ -624,8 +625,11 @@ public class PlayState implements GameState {
 			copyToGrid();		
 			
 		} else {
-			// nothing below, just drop
-			currentPiece.setY(playField[1].getY() - playField[0].getY() - blockSize);
+			// How long is piece from the center?
+			float heightOffset = currentPiece.getMaxY() - currentPiece.getY();
+			
+			// Nothing below, just drop.  But factor in piece length on Y.
+			currentPiece.setY(playField[1].getY() - playField[0].getY() - heightOffset);
 			currentPiece.update();
 
 			// TODO: why do I have to do this instead of copyToGrid()?
