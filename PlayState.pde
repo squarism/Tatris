@@ -11,13 +11,15 @@ public class PlayState implements GameState {
 	Point2d playField[] = new Point2d[2];
 	float timer;
 	boolean gameOver;
+	boolean inMenu;
 	
 	PGraphics grid;		// offscreen buffer for grid lines
 	PGraphics overlay;	// offscreen buffer for overlay (border etc)
 	PGraphics sidebar;	// score, next piece etc
 	
 	public PlayState() {
-		gameOver = false;	
+		gameOver = false;
+		inMenu = false;	
 		blockSize=16.0f;
 				
 		// playfield is 15x29
@@ -228,16 +230,25 @@ public class PlayState implements GameState {
 
 		
 		fill(255);
+		textFont(smallFont,8);
 		text("fps: " + Math.round(fps * .1)/.1,8,8);
 	}
 
 	public GameState nextState() {
+		if (inMenu == true) {
+			inMenu = false;
+			MenuState menuState = new MenuState();
+			menuState.setNextState(this);
+			return menuState;
+		}
+
 	    if (gameOver == true) {
 			return new GameOverState();
 	    }
 	    else{
 	    	return this;
 	    }
+	
 	}
 
 	// TODO: instead of setting X etc, set a variable and let update() move pieces.
@@ -301,6 +312,11 @@ public class PlayState implements GameState {
 		// space bar
 		if (keyCode == ' ') {
 			dropPiece();
+		}
+		
+		if (keyCode == ESC) {
+			inMenu = true;
+			key = 0;  // Fools! don't let them escape!
 		}
 	}
 	

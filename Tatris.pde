@@ -20,43 +20,14 @@ void setup(){
   	size(320, 496); 
   	frameRate(60);
   	fill(0); 
-  	//strokeWeight(3);	// keep an odd number for best look
-  	//stroke(0,150);		// black border, mostly opaque
-  	//rectMode(CENTER); 
-	//smooth();
 	noSmooth();
-  	//strokeCap(ROUND);
-	strokeCap(SQUARE);
 	smallFont = loadFont("04b-08-8.vlw");
 	crackedFont = loadFont("Cracked-48.vlw");
 	regFont = loadFont("MyriadPro-Regular-12.vlw");
 	textFont(smallFont,8);
 
-  //pieces.add(new LPiece(225.0f,315.0f));
-  //pieces.add(new SquarePiece(125.0f,115.0f));
-  //pieces.add(new SPiece(55.0f,75.0f));
-  //pieces.add(new ZPiece(55.0f,445.0f));
-  //pieces.add(new ReverseLPiece(225.0f,445.0f));
-  //pieces.add(new TPiece(55.0f,245.0f));	
-  //pieces.add(new LinePiece(255.0f,65.0f));	
-  /*
-	pieces.add(new Piece(125,215,"square"));
-   	pieces.add(new Piece(60,70,"s"));
-   	pieces.add(new Piece(60,270,"z"));
-   	pieces.add(new Piece(90,470,"revl"));
-   	pieces.add(new Piece(250,70,"line"));
-   	pieces.add(new Piece(250,470,"t"));
-   	*/
-
 	gameState = new PlayState();
   //nes = new NESJoystick(this);
-
-
-
-
-  //((Piece)pieces.get(0)).setX(124.0f);
-  //((Piece)pieces.get(0)).setY(164.0f);	
-  //println(((Piece)pieces.get(0)).getY());
 } 
 
 // This handy drawing routine draws text centered horizontally on the screen
