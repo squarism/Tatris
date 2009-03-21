@@ -19,7 +19,7 @@ public class PieceBag {
 
 	void initPieces() {
 		pieceBag[0] = new LPiece(this.x, this.y);
-		pieceBag[1] = new SquarePiece(this.x, this.y);
+		pieceBag[1] = new OPiece(this.x, this.y);
 		pieceBag[2] = new TPiece(this.x, this.y);
 		pieceBag[3] = new SPiece(this.x, this.y);
 		pieceBag[4] = new ZPiece(this.x, this.y);

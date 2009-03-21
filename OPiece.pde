@@ -2,15 +2,15 @@ class OPiece extends Piece {
 		
 	/*
 		## 01             
-	    	## 23 
-			990000  (red)
+	    ## 23 
+		990000  (red)
 	*/
 
-	int offsetX[] = new int[4];
-	int offsetY[] = new int[4];
+	float offsetX[] = new float[4];
+	float offsetY[] = new float[4];
 
 		
-	public OPiece(int x, int y) {
+	public OPiece(float x, float y) {
 
 	// offsets are relative to pivotpoint (center)
 	// block numbers are in ASCII art at top
@@ -53,11 +53,11 @@ class OPiece extends Piece {
 	/* Call this whenever moving or rotating */
 	public void update() {
 
-                offsetX[0] = 0;
-                offsetY[0] = 0;
+        offsetX[0] = 0;
+        offsetY[0] = 0;
                 
-                offsetX[1] = sin(rotation + radians(90)) * blockSize;
-                offsetY[1] = cos(rotation + radians(270)) * blockSize;
+        offsetX[1] = sin(rotation + radians(90)) * blockSize;
+		offsetY[1] = cos(rotation + radians(270)) * blockSize;
   
   		offsetX[2] = sin(rotation + radians(180)) * blockSize;
 		offsetY[2] = cos(rotation + radians(0)) * blockSize;
@@ -91,7 +91,7 @@ class OPiece extends Piece {
 
 		boolean wallCollide = false;
 		
-		int xVector = 0;
+		float xVector = 0;
 		xVector = x-pivotPoint.getX();
 
 		for (int i=0; i < 4; i++) {
