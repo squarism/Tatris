@@ -35,8 +35,8 @@ public class PlayState implements GameState {
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
 		//currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
-		currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
-		//currentPiece = pieceBag.getPiece();
+		//currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
+		currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -138,8 +138,9 @@ public class PlayState implements GameState {
 		// SINGLE GODDAMN BLOCK TEST -- THROUGH FLOOR BUG
 		//deadGrid[7][28] = new Block(7*blockSize + playField[0].getX(), 28*blockSize + playField[0].getY(), blockSize, "#FFAA00");
 		
-                // 2 rows, 1 not done, 1 row done
-                int tmp = gridSizeY-1;
+		/*
+        // 2 done, 1 not, 1 done, 1 not, 1 done TEST
+        int tmp = gridSizeY-1;
 		for (int i=0; i < gridSizeX; i++) {
 			if (i != 8){
 				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#44FF44");
@@ -160,9 +161,21 @@ public class PlayState implements GameState {
 		tmp--;
 		for (int i=0; i < gridSizeX; i++) {
 			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#0088AA");
+				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#001155");
 			}
 		}
+		tmp--;
+		for (int i=0; i < gridSizeX; i++) {
+			if (i != 8 && i != 7){
+				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#551144");
+			}
+		}
+		tmp--;
+		for (int i=0; i < gridSizeX; i++) {
+			if (i != 8){
+				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#9966FF");
+			}
+		}*/
 
 
                 
@@ -314,9 +327,9 @@ public class PlayState implements GameState {
 			dropPiece();
 		}
 		
-		if (keyCode == ESC) {
+		if (key == 'o') {
 			inMenu = true;
-			key = 0;  // Fools! don't let them escape!
+			//key = 0;  // Fools! don't let them escape!
 		}
 	}
 	
@@ -374,16 +387,9 @@ public class PlayState implements GameState {
 				if (done == cols) {
 					// doneRows contains markers to done rows that need to be deleted
 					doneRows.add(j);
-					//println("ROW " + j + " DONE");				
+					println("ROW " + j + " DONE");				
 				}
 			}
-
-/*
-                        if (done > 0) {
-                          println("ROW NONEMPTY" + j);
-                          nonEmptyRows.add(j);
-                        }*/
-
 		}
 		
 		// now we remove rows if there are any to be done
@@ -435,120 +441,72 @@ public class PlayState implements GameState {
 					emptyRows.add(rowsI);
 					//println("empty index" + (rowsAffected.indexOf(rowsI) > -1));				
 				} else if (empty < cols) {
-                                  println("ROW NONEMPTY" + rowsI);
-                                  nonEmptyRows.add(rowsI);
-                                }
-
-				
+					println("ROW NONEMPTY" + rowsI);
+					nonEmptyRows.add(rowsI);
+				}
 			}
 			
-                        // Loop through all nonEmptyRowNums, then loop through emptyRows
-                        // If nonEmptyRowNum < emptyRowNum
-                        // Add 1 to hashMap of nonEmptyRowNum, store "need to fall" in a hashmap.
-                        // For example 25,26,27,28 get filled with 4 line tetris.
-                        // 26, 27, 28 are done.  25 gets +1, +1, +1 = 3.  Row 25 needs to move down 3 lines.
+			// Loop through all nonEmptyRowNums, then loop through emptyRows
+			// If nonEmptyRowNum < emptyRowNum
+			// Add 1 to hashMap of nonEmptyRowNum, store "need to fall" in a hashmap.
+			// For example 25,26,27,28 get filled with 4 line tetris.
+			// 26, 27, 28 are done.  25 gets +1, +1, +1 = 3.  Row 25 needs to move down 3 lines.
 
-                        // use TreeMap because it's a sorted HashMap
-                        TreeMap needToFall = new TreeMap();
-                        
-                        // loop through non empty rows
-                        int nonEmptyRowNum;
-                        int emptyRowNum;
-                        
-                        
-      			for(Iterator i = nonEmptyRows.iterator(); i.hasNext(); ) {
-                          nonEmptyRowNum = (Integer)i.next();
-        
-                          for(int j=0; j < emptyRows.size(); j++) {
- 
-                            
-                            emptyRowNum = ((Integer)emptyRows.get(j)).intValue();
-                            println("nonEmpty,empty:" + nonEmptyRowNum + "," + emptyRowNum);
-                            
-                            
-                            // there is one row below us, add 1 to "need to fall" for this row
-                            if (nonEmptyRowNum < emptyRowNum) {
+			// use TreeMap because it's a sorted HashMap, sort in reverse (rows restack bottom to top)
+			TreeMap needToFall = new TreeMap(new ReverseComparator());
 
-                                  if (needToFall.containsKey(nonEmptyRowNum)) {
-                                    int tmp = ((Integer)needToFall.get(nonEmptyRowNum)).intValue();                                                          
-                                    //println("sure has:" + i);
-                                    
-                                    needToFall.put(nonEmptyRowNum, ++tmp);
-                                  } else {
-                                    println("init:" + nonEmptyRowNum);
-                                    needToFall.put(nonEmptyRowNum, 1);
-                                  }
-                            }
-                          }
-                        }
-                        
-                        // example of looping through treemap
-                        //Iterator i = needToFall.entrySet().iterator();
-                        //while (i.hasNext()) {
-                          //Map.Entry entry = (Map.Entry) i.next();
-                          //System.out.println("key is " + entry.getKey() + " and value is " + entry.getValue());
-                        //}
+			// loop through non empty rows
+			int nonEmptyRowNum;
+			int emptyRowNum;
 
-                        println(needToFall);
 
-                        // loop through our needToFall map and make them fall by rows stored
-                        Iterator ntfi = needToFall.entrySet().iterator();
-                        while (ntfi.hasNext()) {
-                          Map.Entry row = (Map.Entry) ntfi.next();
-                          int rowNum = (Integer)row.getKey();
-                          int rowDistance = (Integer)row.getValue();
-			  // loop through columns
-			  for (int colNum=0; colNum < cols; colNum++) {
-			    // skip blank blocks (throws a NPE)
-			    if (compressedGrid[colNum][rowNum] != null) {
-          			// get block into variable for easier get() methods later
-				Block tgb = compressedGrid[colNum][rowNum];
-				// new block because of java memory gotcha, can't just get from trimmedGrid
-				Block b = new Block(tgb.getX(), tgb.getY(), tgb.getHeight(), tgb.getFillColor());
-				b.setY(b.getY() + (rowDistance * blockSize));
-				// copy row above
-				compressedGrid[colNum][rowNum+rowDistance] = b;
-				// delete row above, otherwise it will copy itself all the way down
-				compressedGrid[colNum][rowNum] = null;
-                            }
-                          }
-                        }
-                          
-                          
-                          //System.out.println("key is " + entry.getKey() + " and value is " + entry.getValue());
-                        //}
-                                                
-                        
+			for(Iterator i = nonEmptyRows.iterator(); i.hasNext(); ) {
+				nonEmptyRowNum = (Integer)i.next();
 
-                        /*
-			// this moves a row down, need to repeat for every empty row
-			for(Iterator i = emptyRows.iterator(); i.hasNext(); ) {
+				for(int j=0; j < emptyRows.size(); j++) {
+					emptyRowNum = ((Integer)emptyRows.get(j)).intValue();
+					println("nonEmpty,empty:" + nonEmptyRowNum + "," + emptyRowNum);
 
-				int rowNum = (Integer)i.next(); 
-
-				for (int k=rowNum; k > 0; k--) {					
-					// if you're above an empty row you need to go down one
-					// but k needs to start on the empty row, thus <= instead of <
-					if (k <= rowNum){
-						// loop through columns
-						for (int colI=0; colI < cols; colI++) {
-							// skip blank blocks (throws a NPE)
-							if (compressedGrid[colI][k] != null) {
-								// get block into variable for easier get() methods later
-								Block tgb = compressedGrid[colI][k];
-								// new block because of java memory gotcha, can't just get from trimmedGrid
-								Block b = new Block(tgb.getX(), tgb.getY(), tgb.getHeight(), tgb.getFillColor());
-								b.setY(b.getY() + blockSize);
-								// copy row above
-								compressedGrid[colI][k+1] = b;
-								// delete row above, otherwise it will copy itself all the way down
-								compressedGrid[colI][k] = null;
-							}
+					// there is one row below us, add 1 to "need to fall" for this row
+					if (nonEmptyRowNum < emptyRowNum) {
+						if (needToFall.containsKey(nonEmptyRowNum)) {
+							int tmp = ((Integer)needToFall.get(nonEmptyRowNum)).intValue();                                                          
+							//println("sure has:" + i);
+							needToFall.put(nonEmptyRowNum, ++tmp);
+						} else {
+							println("init:" + nonEmptyRowNum);
+							needToFall.put(nonEmptyRowNum, 1);
 						}
 					}
 				}
-			}*/
-			
+			}
+
+			//println(needToFall);
+
+			// loop through our needToFall map and make them fall by rows stored
+			Iterator ntfi = needToFall.entrySet().iterator();
+			while (ntfi.hasNext()) {
+				Map.Entry row = (Map.Entry) ntfi.next();
+				int rowNum = (Integer)row.getKey();
+				println("moving row:"+rowNum);
+				int rowDistance = (Integer)row.getValue();
+				// loop through columns
+				for (int colNum=0; colNum < cols; colNum++) {
+					// skip blank blocks (throws a NPE)
+					if (compressedGrid[colNum][rowNum] != null) {
+						// get block into variable for easier get() methods later
+						Block cgb = compressedGrid[colNum][rowNum];
+						// new block because of java memory gotcha, can't just get from trimmedGrid
+						Block b = new Block(cgb.getX(), cgb.getY(), cgb.getHeight(), cgb.getFillColor());
+						b.setY(b.getY() + (rowDistance * blockSize));
+						// copy row above
+						compressedGrid[colNum][rowNum+rowDistance] = b;
+						//print("C:"+colNum+"RD:"+(rowNum+rowDistance)+" ");
+						// delete row above, otherwise it will copy itself all the way down
+						compressedGrid[colNum][rowNum] = null;
+					}
+				}
+			}
 			// compressedGrid is flattened and removed of done rows
 			deadGrid = compressedGrid;
 		}
