@@ -1,4 +1,4 @@
-class SquarePiece extends Piece {
+class OPiece extends Piece {
 		
 	/*
 		## 01             
@@ -6,11 +6,11 @@ class SquarePiece extends Piece {
 			990000  (red)
 	*/
 
-	float offsetX[] = new float[4];
-	float offsetY[] = new float[4];
+	int offsetX[] = new int[4];
+	int offsetY[] = new int[4];
 
 		
-	public SquarePiece(float x, float y) {
+	public OPiece(int x, int y) {
 
 	// offsets are relative to pivotpoint (center)
 	// block numbers are in ASCII art at top
@@ -29,18 +29,18 @@ class SquarePiece extends Piece {
 		update();
 	}
 			
-	public void setRotation(float angle) {
+	public void setRotation(int angle) {
                 // square doesn't rotate        
   		//return false;
 	}
 	
 	// TODO: refactor cleaner
-	public boolean rotateCollideX(float wallStart, float wallWidth) {
+	public boolean rotateCollideX(int wallStart, int wallWidth) {
                 // square doesn't rotate        
   		return false;
 	}
 	
-	public boolean rotateCollideY(float roomStart, float roomWidth) {
+	public boolean rotateCollideY(int roomStart, int roomWidth) {
                 // square doesn't rotate        
   		return false;
 	}
@@ -87,11 +87,11 @@ class SquarePiece extends Piece {
 	}
 	
 	// setx with a wall in mind for collision detect
-	public void setX(float x, float wall) {
+	public void setX(int x, int wall) {
 
 		boolean wallCollide = false;
 		
-		float xVector = 0;
+		int xVector = 0;
 		xVector = x-pivotPoint.getX();
 
 		for (int i=0; i < 4; i++) {
@@ -114,11 +114,11 @@ class SquarePiece extends Piece {
 	}
 	
 	// set x unconditionally
-	public void setX(float x) {
+	public void setX(int x) {
 		pivotPoint.setX(x);
 	}
 	
-	public void setY(float y) {
+	public void setY(int y) {
 		pivotPoint.setY(y);
 	}
 	
