@@ -28,12 +28,13 @@ class OPiece extends Piece {
                 // call update because our offsets aren't set yet in constructor above
 		update();
 	}
+
 			
-	public void setRotation(int angle) {
-                // square doesn't rotate        
-  		//return false;
+	public void setRotation(float angle) {
+        // override and do nothing, square doesn't rotate
 	}
 	
+	/*
 	// TODO: refactor cleaner
 	public boolean rotateCollideX(int wallStart, int wallWidth) {
                 // square doesn't rotate        
@@ -48,7 +49,8 @@ class OPiece extends Piece {
 	public boolean rotateCollide(Block deadGrid[][], Point2d playField[]) {
                 // square doesn't rotate
   		return false;
-	}
+	}*/
+	
 	
 	/* Call this whenever moving or rotating */
 	public void update() {
@@ -84,42 +86,6 @@ class OPiece extends Piece {
 		super.round(blocks[2]);
 		super.round(blocks[3]);
 		
-	}
-	
-	// setx with a wall in mind for collision detect
-	public void setX(int x, int wall) {
-
-		boolean wallCollide = false;
-		
-		float xVector = 0;
-		xVector = x-pivotPoint.getX();
-
-		for (int i=0; i < 4; i++) {
-			
-			// we're going right
-			if (xVector > 0 && blocks[i].getX() + xVector >= wall) {
-				//println("we're going right");
-				wallCollide = true;
-			}
-			// we're going left
-			if (xVector < 0 && blocks[i].getX() + xVector < wall) {
-				//println("we're going left");
-				wallCollide = true;
-			}
-		}
-		// we didn't hit a wall so set x
-		if (!wallCollide){
-			pivotPoint.setX(x);
-		}
-	}
-	
-	// set x unconditionally
-	public void setX(int x) {
-		pivotPoint.setX(x);
-	}
-	
-	public void setY(int y) {
-		pivotPoint.setY(y);
 	}
 	
 }

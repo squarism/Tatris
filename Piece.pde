@@ -11,7 +11,7 @@ class Piece {
 	Block[] blocks = new Block[4];
 
 	public void setRotation(float angle) {
-		
+		this.rotation = angle;
 	}
 	
 	public void draw() {
@@ -30,9 +30,10 @@ class Piece {
 		pivotPoint.setX(x);
 	}
 	
+	/*
 	public void setX(float x, float wall) {
 		pivotPoint.setX(x);
-	}
+	}*/
 	
 	public void setY(float y) {
 		pivotPoint.setY(y);
@@ -47,6 +48,13 @@ class Piece {
 	}
 	
 	public void round(Block block) {
+		// TODO: uncomment and refactor this
+		/*
+		for (int i=0; i < blocks.length; i++) {
+			println("rounding" + i);
+			blocks[i].setX(Math.round(blocks[i].getX() / blockSize) * blockSize);
+			blocks[i].setY(Math.round(blocks[i].getY() / blockSize) * blockSize);
+		}*/
 		// rounding to line up with grid
 		//println("before round x:" + block.getX() + " y:" + block.getY());
 		block.setX(Math.round(block.getX() / blockSize) * blockSize);
@@ -124,5 +132,33 @@ class Piece {
 
 		return returnBlocks;	
 	}
+	
+	// setx with a wall in mind for collision detect
+	public void setX(float x, float wall) {
+
+		boolean wallCollide = false;
+		
+		float xVector = 0;
+		xVector = x-pivotPoint.getX();
+
+		for (int i=0; i < 4; i++) {
+			
+			// we're going right
+			if (xVector > 0 && blocks[i].getX() + xVector >= wall) {
+				//println("we're going right");
+				wallCollide = true;
+			}
+			// we're going left
+			if (xVector < 0 && blocks[i].getX() + xVector < wall) {
+				//println("we're going left");
+				wallCollide = true;
+			}
+		}
+		// we didn't hit a wall so set x
+		if (!wallCollide){
+			pivotPoint.setX(x);
+		}
+	}
+	
 		
 }

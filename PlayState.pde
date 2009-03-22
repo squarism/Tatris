@@ -34,9 +34,9 @@ public class PlayState implements GameState {
 		println("GRIDSIZE " + gridSizeX + " " + gridSizeY);
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
-		//currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
+		currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
 		//currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
-		currentPiece = pieceBag.getPiece();
+		//currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
