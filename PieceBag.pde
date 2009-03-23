@@ -25,6 +25,11 @@ public class PieceBag {
 		pieceBag[4] = new ZPiece(this.x, this.y);
 		pieceBag[5] = new IPiece(this.x, this.y);
 		pieceBag[6] = new JPiece(this.x, this.y);
+		
+		/*
+		for (int i=1; i<7; i++) {
+			pieceBag[i] = new LPiece(this.x, this.y);
+		}*/
 	}
 	
 	//pieceBag[0] = new LPiece(playField[1].getX()/2, 32.0f);

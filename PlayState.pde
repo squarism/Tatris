@@ -34,9 +34,9 @@ public class PlayState implements GameState {
 		println("GRIDSIZE " + gridSizeX + " " + gridSizeY);
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
-		currentPiece = new LPiece(playField[1].getX()/2, 32.0f);
+		//currentPiece = new SPiece(playField[1].getX()/2, 32.0f);
 		//currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
-		//currentPiece = pieceBag.getPiece();
+		currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -177,8 +177,17 @@ public class PlayState implements GameState {
 			}
 		}*/
 
+        // side colli test
+        int tmp = gridSizeY-1;
+		for (int k=0; k<8; k++){
 
-                
+			for (int i=0; i < gridSizeX; i++) {
+				if (i < 5){
+					deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#44FF44");
+				}
+			}
+			tmp--;
+		}
 
 	}
 	
@@ -284,7 +293,9 @@ public class PlayState implements GameState {
 		// up arrow key
 		if (keyCode == UP) {
 			// checks collision with grid
-			if (! currentPiece.rotateCollide(deadGrid, playField)) {
+			//println("PLAYSTATE THINKS:" + currentPiece.rotateCollide(deadGrid, playField, gridSizeX, gridSizeY));
+			
+			if (! currentPiece.rotateCollide(deadGrid, playField, gridSizeX, gridSizeY)) {
 				// checks rotation collision with X boundries	
 				if (! currentPiece.rotateCollideX(playField[0].getX(), playField[1].getX())) {
 					// checks rotation collision with Y boundries
@@ -316,7 +327,7 @@ public class PlayState implements GameState {
 			
 			// user pressed down, check for grid collide
 			if (gridCollideY(currentPiece.getBlocks())) {
-				println("collision on grid");
+				//println("collision on grid");
 				copyToGrid();
 			}
 			
@@ -387,7 +398,7 @@ public class PlayState implements GameState {
 				if (done == cols) {
 					// doneRows contains markers to done rows that need to be deleted
 					doneRows.add(j);
-					println("ROW " + j + " DONE");				
+					//println("ROW " + j + " DONE");				
 				}
 			}
 		}
@@ -441,7 +452,7 @@ public class PlayState implements GameState {
 					emptyRows.add(rowsI);
 					//println("empty index" + (rowsAffected.indexOf(rowsI) > -1));				
 				} else if (empty < cols) {
-					println("ROW NONEMPTY" + rowsI);
+					//println("ROW NONEMPTY" + rowsI);
 					nonEmptyRows.add(rowsI);
 				}
 			}
@@ -465,7 +476,7 @@ public class PlayState implements GameState {
 
 				for(int j=0; j < emptyRows.size(); j++) {
 					emptyRowNum = ((Integer)emptyRows.get(j)).intValue();
-					println("nonEmpty,empty:" + nonEmptyRowNum + "," + emptyRowNum);
+					//println("nonEmpty,empty:" + nonEmptyRowNum + "," + emptyRowNum);
 
 					// there is one row below us, add 1 to "need to fall" for this row
 					if (nonEmptyRowNum < emptyRowNum) {
@@ -474,7 +485,6 @@ public class PlayState implements GameState {
 							//println("sure has:" + i);
 							needToFall.put(nonEmptyRowNum, ++tmp);
 						} else {
-							println("init:" + nonEmptyRowNum);
 							needToFall.put(nonEmptyRowNum, 1);
 						}
 					}
@@ -488,7 +498,7 @@ public class PlayState implements GameState {
 			while (ntfi.hasNext()) {
 				Map.Entry row = (Map.Entry) ntfi.next();
 				int rowNum = (Integer)row.getKey();
-				println("moving row:"+rowNum);
+				//println("moving row:"+rowNum);
 				int rowDistance = (Integer)row.getValue();
 				// loop through columns
 				for (int colNum=0; colNum < cols; colNum++) {
@@ -581,7 +591,6 @@ public class PlayState implements GameState {
 			Float fx = (checkBlocks[i].getX() + playField[0].getX()) / blockSize;
 			Float fy = (checkBlocks[i].getY() + playField[0].getY()) / blockSize;
 			
-			
 			//println("block" + i + " " + fx * blockSize + " " + fy * blockSize);
 			if (direction > 0) {
 				// limit x to edge of playfield
@@ -600,6 +609,7 @@ public class PlayState implements GameState {
 				int x = fx.intValue() - 2;
 				if (x > 0) {
 					int y = fy.intValue() - 1;
+					println("testing:" + x + "," + y);
 					// we hit something on the grid
 					if(deadGrid[x-1][y-1] != null) {
 						println("deny left");

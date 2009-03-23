@@ -5,79 +5,39 @@ class OPiece extends Piece {
 	    ## 23 
 		990000  (red)
 	*/
-
-	float offsetX[] = new float[4];
-	float offsetY[] = new float[4];
-
 		
 	public OPiece(float x, float y) {
-
-	// offsets are relative to pivotpoint (center)
-	// block numbers are in ASCII art at top
-	// * is pivot point	
-
-
 		super.setX(x);
 		super.setY(y);
-				
-		blocks[0] = new Block(x + offsetX[0], y + offsetY[0], blockSize, "#AA1111");
-		blocks[1] = new Block(x + offsetX[1], y + offsetY[1], blockSize, "#AA1111");
-		blocks[2] = new Block(x + offsetX[2], y + offsetY[2], blockSize, "#AA1111");
-		blocks[3] = new Block(x + offsetX[3], y + offsetY[3], blockSize, "#AA1111");
 
-                // call update because our offsets aren't set yet in constructor above
+		for (int i=0; i<4; i++) {
+			blocks[i] = new Block(x + offsetX[i], y + offsetY[i], blockSize, "#AA1111");
+		}
 		update();
+		
+		super.round(blocks[0]);
+		super.round(blocks[1]);
+		super.round(blocks[2]);
+		super.round(blocks[3]);
 	}
-
-			
-	public void setRotation(float angle) {
-        // override and do nothing, square doesn't rotate
-	}
-	
-	/*
-	// TODO: refactor cleaner
-	public boolean rotateCollideX(int wallStart, int wallWidth) {
-                // square doesn't rotate        
-  		return false;
-	}
-	
-	public boolean rotateCollideY(int roomStart, int roomWidth) {
-                // square doesn't rotate        
-  		return false;
-	}
-	
-	public boolean rotateCollide(Block deadGrid[][], Point2d playField[]) {
-                // square doesn't rotate
-  		return false;
-	}*/
-	
 	
 	/* Call this whenever moving or rotating */
 	public void update() {
 
         offsetX[0] = 0;
-        offsetY[0] = 0;
-                
         offsetX[1] = sin(rotation + radians(90)) * blockSize;
-		offsetY[1] = cos(rotation + radians(270)) * blockSize;
-  
   		offsetX[2] = sin(rotation + radians(180)) * blockSize;
-		offsetY[2] = cos(rotation + radians(0)) * blockSize;
-
   		offsetX[3] = sin(rotation + radians(135)) * blockSize;
+
+        offsetY[0] = 0;
+		offsetY[1] = cos(rotation + radians(270)) * blockSize;
+		offsetY[2] = cos(rotation + radians(0)) * blockSize;
 		offsetY[3] = cos(rotation + radians(315)) * blockSize;
 		
-		blocks[0].setX(super.pivotPoint.getX() + offsetX[0]);
-		blocks[0].setY(super.pivotPoint.getY() + offsetY[0]);
-		
-		blocks[1].setX(super.pivotPoint.getX() + offsetX[1]);
-		blocks[1].setY(super.pivotPoint.getY() + offsetY[1]);
-
-		blocks[2].setX(super.pivotPoint.getX() + offsetX[2]);
-		blocks[2].setY(super.pivotPoint.getY() + offsetY[2]);
-
-		blocks[3].setX(super.pivotPoint.getX() + offsetX[3]);
-		blocks[3].setY(super.pivotPoint.getY() + offsetY[3]);
+		for (int i=0; i<4; i++) {
+			blocks[i].setX(super.pivotPoint.getX() + offsetX[i]);
+			blocks[i].setY(super.pivotPoint.getY() + offsetY[i]);
+		}
 
 		// rounding to line up with grid
 		// TODO: better way?
@@ -87,5 +47,28 @@ class OPiece extends Piece {
 		super.round(blocks[3]);
 		
 	}
+	
+	// this method is called to test collision without updating position, it's like look-ahead
+	public void testUpdate() {
+		testRotation = rotation + radians(90.0f);
+		
+		testOffsetX[0] = 0;
+		testOffsetX[1] = sin(testRotation + radians(90)) * blockSize;
+		testOffsetX[2] = sin(testRotation + radians(180)) * blockSize;
+		testOffsetX[3] = sin(testRotation + radians(135)) * blockSize;
+
+        testOffsetY[0] = 0;
+		testOffsetY[1] = cos(testRotation + radians(270)) * blockSize;
+		testOffsetY[2] = cos(testRotation + radians(0)) * blockSize;
+		testOffsetY[3] = cos(testRotation + radians(315)) * blockSize;
+
+		// round our test offsets to blocksize
+		for (int i=0; i<4; i++) {
+			testOffsetX[i] = Math.round(testOffsetX[i] / blockSize) * blockSize;
+			testOffsetY[i] = Math.round(testOffsetY[i] / blockSize) * blockSize;
+		}
+	}
+	
+	
 	
 }
