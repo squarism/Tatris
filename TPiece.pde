@@ -1,8 +1,8 @@
 class TPiece extends Piece {
 		
 	/*
- 		 #   0		441144 (purple)
-		### 123
+ 		 #   2		441144 (purple)
+		### 103
 	*/
 		
 	public TPiece(float x, float y) {
@@ -60,14 +60,14 @@ class TPiece extends Piece {
 	public void update() {
 		
 		offsetX[0] = 0;
-		offsetX[1] = sin(rotation + radians(225)) * (blockSize + (blockSize / 2));
-		offsetX[2] = sin(rotation + radians(180)) * blockSize;
-		offsetX[3] = sin(rotation + radians(135)) * (blockSize + (blockSize / 2));
+		offsetX[1] = sin(rotation + radians(270)) * blockSize;
+		offsetX[2] = sin(rotation + radians(0)) * blockSize;
+		offsetX[3] = sin(rotation + radians(90)) * blockSize;
 		
 		offsetY[0] = 0;
-		offsetY[1] = cos(rotation + radians(45)) * (blockSize + (blockSize / 2));
-		offsetY[2] = cos(rotation + radians(0)) * blockSize;
-		offsetY[3] = cos(rotation + radians(315)) * (blockSize + (blockSize / 2));
+		offsetY[1] = cos(rotation + radians(90)) * blockSize;
+		offsetY[2] = cos(rotation + radians(180)) * blockSize;
+		offsetY[3] = cos(rotation + radians(270)) * blockSize;
 		
 		for (int i=0; i<4; i++) {
 			blocks[i].setX(super.pivotPoint.getX() + offsetX[i]);
@@ -87,14 +87,14 @@ class TPiece extends Piece {
 		testRotation = rotation + radians(90.0f);
 		
 		testOffsetX[0] = 0;
-		testOffsetX[1] = sin(testRotation + radians(225)) * (blockSize + (blockSize / 2));
-		testOffsetX[2] = sin(testRotation + radians(180)) * blockSize;
-		testOffsetX[3] = sin(testRotation + radians(135)) * (blockSize + (blockSize / 2));
+		testOffsetX[1] = sin(testRotation + radians(270)) * blockSize;
+		testOffsetX[2] = sin(testRotation + radians(0)) * blockSize;
+		testOffsetX[3] = sin(testRotation + radians(90)) * blockSize;
 
         testOffsetY[0] = 0;
-		testOffsetY[1] = cos(testRotation + radians(45)) * (blockSize + (blockSize / 2));
-		testOffsetY[2] = cos(testRotation + radians(0)) * blockSize;
-		testOffsetY[3] = cos(testRotation + radians(315)) * (blockSize + (blockSize / 2));
+		testOffsetY[1] = cos(testRotation + radians(90)) * blockSize;
+		testOffsetY[2] = cos(testRotation + radians(180)) * blockSize;
+		testOffsetY[3] = cos(testRotation + radians(270)) * blockSize;
 
 		// round our test offsets to blocksize
 		for (int i=0; i<4; i++) {

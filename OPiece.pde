@@ -21,6 +21,10 @@ class OPiece extends Piece {
 		super.round(blocks[3]);
 	}
 	
+	public void setRotation(float angle) {
+		// do nothing and like it
+	}
+	
 	/* Call this whenever moving or rotating */
 	public void update() {
 

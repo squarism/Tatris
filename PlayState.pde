@@ -178,6 +178,7 @@ public class PlayState implements GameState {
 		}*/
 
         // side colli test
+		/*
         int tmp = gridSizeY-1;
 		for (int k=0; k<8; k++){
 
@@ -187,7 +188,7 @@ public class PlayState implements GameState {
 				}
 			}
 			tmp--;
-		}
+		}*/
 
 	}
 	
@@ -534,8 +535,6 @@ public class PlayState implements GameState {
 			}
 		}
 		
-		
-		
 		// new piece HERE
 		//currentPiece = new LPiece(playField[1].getX() / 2, 32.0f);
 		//currentPiece = pieceBag.getPiece();
@@ -609,7 +608,7 @@ public class PlayState implements GameState {
 				int x = fx.intValue() - 2;
 				if (x > 0) {
 					int y = fy.intValue() - 1;
-					println("testing:" + x + "," + y);
+					//println("testing:" + x + "," + y);
 					// we hit something on the grid
 					if(deadGrid[x-1][y-1] != null) {
 						println("deny left");
@@ -679,7 +678,7 @@ public class PlayState implements GameState {
 			//println (columns[i]);
 			
 			// store the least Y value for yStart later
-			println("YB:" + yBlocks[i].getX() + "," + yBlocks[i].getY());
+			//println("YB:" + yBlocks[i].getX() + "," + yBlocks[i].getY());
 		}
 		
 		// search down columns with Y in current piece
@@ -707,7 +706,7 @@ public class PlayState implements GameState {
 					// remember where we hit the grid
 					hitPoints.add(hitPoint);
 
-					println(hitPoint.getX() + "," + hitPoint.getY() + "hitsomething=" + hitSomething);
+					//println("hitPoints: " + hitPoint.getX() + "," + hitPoint.getY() + "hitsomething=" + hitSomething);
 				}
 			}
 		}

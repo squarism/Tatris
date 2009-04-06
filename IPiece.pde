@@ -24,8 +24,7 @@ class IPiece extends Piece {
 	}
 	
 	public void setRotation(float angle) {
-		println(angle);
-
+		// this just rotates two ways back and forth
 		if(angle >= radians(0.0f) && angle <= radians(90.0f)) {
 			this.rotation = radians(90.0f);
 		} else if (angle >= radians(90.0f) && angle <= radians(180.0f)) {
