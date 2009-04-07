@@ -66,6 +66,19 @@ public class MenuState implements GameState {
 					}*/
 				}
 			}
+		}		
+		
+		if (keyEsc) {
+			keyEsc = false;
+			if (!waitingForKey && currentMenu != mainMenu) {
+				currentMenu = mainMenu;
+				focusY = 0;
+			}  else if (currentMenu == mainMenu){
+				if (!isNewGame) {
+					inMenu = false;
+				}
+			}
+			waitingForKey = false;
 		}
 		
 		if (waitingForKey == true && gotKey != 0) {
@@ -80,20 +93,6 @@ public class MenuState implements GameState {
 
 			waitingForKey = false;
 			gotKey = 0;
-		}
-		
-		
-		if (keyEsc) {
-			keyEsc = false;
-			waitingForKey = false;
-			if (currentMenu != mainMenu) {
-				currentMenu = mainMenu;
-				focusY = 0;
-			} else {
-				if (!isNewGame) {
-					inMenu = false;
-				}
-			}
 		}
 
 	}
@@ -163,12 +162,8 @@ public class MenuState implements GameState {
 			}
 			textCentered(menuItem, 144 + (i * fontSize), 255, 0);
 		}
-
-
-		
-		//textFont(regFont,12);
-		//textCentered(":(", height/4+24,255, 0);	
 	}
+
 	public GameState nextState() {
 		if (inMenu == false) {
 			return nextState;
@@ -200,29 +195,26 @@ public class MenuState implements GameState {
 	}
 	
 	public void keyPressed() {
-		
-		//println(keyCode);
-		
 		if (keyCode == ESC) {
 			//inMenu = false;
 			keyEsc = true;
 			key = 0;  // Fools! don't let them escape!
-		}
-		
-		
-		if (waitingForKey == true) {
-			gotKey = keyCode;
 		} else {
-			if (keyCode == UP) keyUp = true;
-			if (keyCode == DOWN) keyDown = true;
-			if (keyCode == LEFT) keyLeft = true;
-			if (keyCode == RIGHT) keyRight = true;
-			if (keyCode == ENTER) keyEnter = true;
+			// the else handles the ESC to cancel keybinding ESC cannot be gotKey that way
+			if (waitingForKey == true) {
+				gotKey = keyCode;
+			} else {
+				if (keyCode == UP) keyUp = true;
+				if (keyCode == DOWN) keyDown = true;
+				if (keyCode == LEFT) keyLeft = true;
+				if (keyCode == RIGHT) keyRight = true;
+				if (keyCode == ENTER) keyEnter = true;
+			}
 		}
 
 	}
 	public void keyReleased() {
-
+		// do nothing and like it
 	}
 }
 

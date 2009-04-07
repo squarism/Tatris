@@ -292,14 +292,14 @@ public class PlayState implements GameState {
 		}
 
 		// right arrow key
-		if (keyCode == RIGHT) {
+		if (keyCode == controlRight) {
 			if (! gridCollideX(currentPiece.getBlocks(), 1)) {
 				currentPiece.setX(currentPiece.getX() + blockSize, playField[1].getX());
 			}
 		}
 
 		// up arrow key
-		if (keyCode == UP) {
+		if (keyCode == controlRotate) {
 			// checks collision with grid
 			//println("PLAYSTATE THINKS:" + currentPiece.rotateCollide(deadGrid, playField, gridSizeX, gridSizeY));
 			
@@ -317,7 +317,7 @@ public class PlayState implements GameState {
 		}
 
 		// down arrow key
-		if (keyCode == DOWN) {
+		if (keyCode == controlDown) {
 			// at bottom of play boundry
 			if (currentPiece.getMaxY() + blockSize < playField[1].getY()) {				
 				// this is down movement from keystroke
