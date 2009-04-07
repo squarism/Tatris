@@ -16,6 +16,7 @@ public class PlayState implements GameState {
 	PGraphics grid;		// offscreen buffer for grid lines
 	PGraphics overlay;	// offscreen buffer for overlay (border etc)
 	PGraphics sidebar;	// score, next piece etc
+	PGraphics badge;	// logo etc, separate for blending
 	
 	Score score = new Score();
 	Level level = new Level();
@@ -40,8 +41,8 @@ public class PlayState implements GameState {
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
 		//currentPiece = new ZPiece(playField[1].getX()/2, 32.0f);
-		currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
-		//currentPiece = pieceBag.getPiece();
+		//currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
+		currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -97,7 +98,7 @@ public class PlayState implements GameState {
 		}*/
 
 		// 3 LINE TEST
-		
+		/*
 		int tmp = 28;
 		for (int i=0; i < 11; i++) {
 			if (i != 8){
@@ -115,7 +116,7 @@ public class PlayState implements GameState {
 			if (i != 8){
 				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
 			}
-		}
+		}*/
 		
 		// BUMPY ROTATE GRID TEST
 		/*
@@ -287,6 +288,9 @@ public class PlayState implements GameState {
 		
 		// level text
 		text(level.getLevel(), playField[1].getX() + blockSize * 2 - linesWidth, playField[0].getY() + blockSize * 21);
+		
+		blend(badge, 0, 0, badge.width, badge.height, width-140, height-40, badge.width, badge.height, SCREEN);
+		//image(badge, playField[1].getX(), blockSize);
 
 		// animation & effects
 		for (int i=0; i < anim.size(); i++) {
@@ -391,9 +395,9 @@ public class PlayState implements GameState {
 			dropPiece();
 		}
 		
-		if (key == 'o') {
+		if (key == ESC) {
 			inMenu = true;
-			//key = 0;  // Fools! don't let them escape!
+			key = 0;  // Fools! don't let them escape!
 		}
 	}
 	
@@ -722,6 +726,7 @@ public class PlayState implements GameState {
 		ylen = (int)(playField[1].getY());
 		sidebar = createGraphics(xlen, ylen, P2D);
 		sidebar.beginDraw();
+
 		// next box
 		sidebar.strokeWeight(1);
 		sidebar.stroke(255);
@@ -757,8 +762,18 @@ public class PlayState implements GameState {
 		sidebar.fill(255);
 		sidebar.text("LEVEL", (blockSize * 3) - 18, playField[0].getY() + blockSize * 18 - 2);
 
-		
 		sidebar.endDraw();
+
+		// badge
+		badge = createGraphics(300, 48, P2D);
+		badge.beginDraw();		
+		// badge.background(0, 0);
+		// badge.fill(255,255,255,120);
+		//badge.rect(25,25,25,25);
+		badge.textFont(visitorFont, 32);
+		badge.text("TATRIS", 25, 25);
+		badge.endDraw();
+
 		
 	}
 	

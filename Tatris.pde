@@ -30,6 +30,8 @@ int controlDrop = KeyEvent.VK_SPACE;
 
 PApplet tatris;
 
+String ver = "v0.3";
+
 void setup(){ 
   	//setup game display area, background colour and framerate
   	size(320, 496); 
@@ -189,6 +191,19 @@ private static String getKeyText(int code) {
          case KeyEvent.VK_UP: return "Up";
          default: return java.awt.event.KeyEvent.getKeyText(code);
       }
+}
+
+/**
+
+* Call the PApplet main method.
+
+*/
+
+
+
+public static void main( String[] args ) {
+	System.out.println( "\nOpenCV meet Processing PApplet\n" );
+	PApplet.main( new String[]{"Tatris"} );
 }
 
 
