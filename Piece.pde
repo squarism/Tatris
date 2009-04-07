@@ -161,8 +161,8 @@ class Piece {
 				
 				for (int i=0; i < 4; i++) {
 					float testX = pivotPoint.getX() + testOffsetX[i];
-					testX = Math.round(testX / blockSize) * blockSize;
-					if (testX < wallWidth - blockSize / 2) {
+					//testX = Math.round(testX / blockSize) * blockSize;
+					if (testX < wallStart) {
 						//println("denied " + i);
 						return true;
 					}

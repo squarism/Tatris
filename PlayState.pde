@@ -17,6 +17,10 @@ public class PlayState implements GameState {
 	PGraphics overlay;	// offscreen buffer for overlay (border etc)
 	PGraphics sidebar;	// score, next piece etc
 	
+	Score score = new Score();
+	Level level = new Level();
+	float currentTimer = level.getTimer();
+	
 	public PlayState() {
 		gameOver = false;
 		inMenu = false;	
@@ -34,7 +38,7 @@ public class PlayState implements GameState {
 		println("GRIDSIZE " + gridSizeX + " " + gridSizeY);
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
-		//currentPiece = new SPiece(playField[1].getX()/2, 32.0f);
+		//currentPiece = new ZPiece(playField[1].getX()/2, 32.0f);
 		//currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
 		currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
@@ -193,10 +197,9 @@ public class PlayState implements GameState {
 	}
 	
 	public void update(float elapsed) {
-
 		currentPiece.update();
-
 		timer -= elapsed;
+		
 		// hit bottom, copy to deadGrid
 		if (currentPiece.getMaxY() > playField[1].getY() - blockSize * 2 && timer <= 0) {
 			copyToGrid();
@@ -214,7 +217,7 @@ public class PlayState implements GameState {
 			}
 
 			// TODO: add difficulty timer
-			timer = 1;
+			timer = currentTimer;
 			
 		}
 	}
@@ -223,16 +226,11 @@ public class PlayState implements GameState {
 	// last drawn appears on top
 	public void paint() {
 		background(25);
-
-		// display offscreen grid buffer image
-		image(grid, playField[0].getX() - 1, playField[0].getY() - 1);
-
+		image(grid, playField[0].getX() - 1, playField[0].getY() - 1);			// display offscreen grid buffer image
 		currentPiece.draw();
 
-				
 		stroke(0,125);		// black border, mostly opaque
-		strokeWeight(3);
-  		
+		strokeWeight(3); 		
 		for (int x=0; x < gridSizeX; x++) {
 			for (int y=0; y < gridSizeY; y++) {
 				if (deadGrid[x][y]!=null) deadGrid[x][y].draw();
@@ -240,15 +238,36 @@ public class PlayState implements GameState {
 		}
 
 		image(overlay, playField[0].getX() - 2, playField[0].getY() - 2);
-		
-
 		image(sidebar, playField[1].getX(), blockSize);
 
 		// draw next piece
 		pushMatrix();
-		translate(playField[1].getX() - (blockSize * 3), blockSize * 2);
+		translate(playField[1].getX() - (blockSize * 2), blockSize * 2);
 		nextPiece.draw();
 		popMatrix();
+		
+		fill(255);
+		int theScore = score.getScore();
+		int scoreWidth = new Integer(theScore).toString().length();		// need this to make alignment pretty
+
+		if (scoreWidth > 2) {
+			textFont(visitorFont, 64/(scoreWidth * .45));	// number grows, scale down for pretty display
+		} else {
+			textFont(visitorFont, 48);
+		}
+		text(theScore, playField[1].getX() + blockSize * 2 - scoreWidth, playField[0].getY() + blockSize * 11);
+		
+		int theLines = score.getLines();
+		int linesWidth = new Integer(theLines).toString().length();		// need this to make alignment pretty
+
+		if (linesWidth > 2) {
+			textFont(visitorFont, 64/(linesWidth * .45));		// number grows, scale down for pretty display
+		} else {
+			textFont(visitorFont, 48);
+		}
+		text(theLines, playField[1].getX() + blockSize * 2 - linesWidth, playField[0].getY() + blockSize * 16);
+		
+		text(level.getLevel(), playField[1].getX() + blockSize * 2 - linesWidth, playField[0].getY() + blockSize * 21);
 
 		if (fpsEnabled) {
 			fill(255);
@@ -413,6 +432,10 @@ public class PlayState implements GameState {
 		
 		// now we remove rows if there are any to be done
 		if (doneRows.size() > 0) {
+			
+			score.scoreLines(doneRows.size());
+			level.update(score.getLines());
+			currentTimer = level.getTimer();
 
 			// copy rows to new array, skipping rows that are done
 			Block trimmedGrid[][] = new Block[gridSizeX][gridSizeY];
@@ -663,15 +686,42 @@ public class PlayState implements GameState {
 		ylen = (int)(playField[1].getY());
 		sidebar = createGraphics(xlen, ylen, P2D);
 		sidebar.beginDraw();
+		// next box
 		sidebar.strokeWeight(1);
 		sidebar.stroke(255);
 		sidebar.fill(0);
-		sidebar.rect(blockSize, playField[0].getY(), blockSize * 5, blockSize * 5);
-		sidebar.rect(blockSize, 0, blockSize * 5, blockSize);
+		sidebar.rect(blockSize, playField[0].getY(), blockSize * 6, blockSize * 6);
+		sidebar.rect(blockSize, 0, blockSize * 6, blockSize);
 		sidebar.textFont(visitorFont, 20);
 		sidebar.fill(255);
 		// hardcode 18 as textWidth because of weird bug when starting a new game
 		sidebar.text("NEXT", (blockSize * 3) - 18, playField[0].getY() - 2);
+		
+		// score box
+		sidebar.fill(0);
+		sidebar.rect(blockSize, playField[0].getY() + blockSize * 8, blockSize * 6, blockSize * 3);
+		sidebar.rect(blockSize, playField[0].getY() + blockSize * 7, blockSize * 6, blockSize);
+		sidebar.textFont(visitorFont, 20);
+		sidebar.fill(255);
+		sidebar.text("SCORE", (blockSize * 3) - 18, playField[0].getY() + blockSize * 8 - 2);
+		
+		// lines box
+		sidebar.fill(0);
+		sidebar.rect(blockSize, playField[0].getY() + blockSize * 13, blockSize * 6, blockSize * 3);
+		sidebar.rect(blockSize, playField[0].getY() + blockSize * 12, blockSize * 6, blockSize);
+		sidebar.textFont(visitorFont, 20);
+		sidebar.fill(255);
+		sidebar.text("LINES", (blockSize * 3) - 18, playField[0].getY() + blockSize * 13 - 2);
+		
+		// level box
+		sidebar.fill(0);
+		sidebar.rect(blockSize, playField[0].getY() + blockSize * 18, blockSize * 6, blockSize * 3);
+		sidebar.rect(blockSize, playField[0].getY() + blockSize * 17, blockSize * 6, blockSize);
+		sidebar.textFont(visitorFont, 20);
+		sidebar.fill(255);
+		sidebar.text("LEVEL", (blockSize * 3) - 18, playField[0].getY() + blockSize * 18 - 2);
+
+		
 		sidebar.endDraw();
 		
 	}
@@ -750,10 +800,13 @@ public class PlayState implements GameState {
 			// new Y pos is current pos minus offset plus closest distance of hit block
 			float newYPosition = currentPiece.getY() - playField[0].getY() + closest;
 			
-			// the piece might go through the floor, check it
+			score.scoreDrop((int)closest);
+			
+			// the piece might go through the floor even if we checked grid collide, check it again
 			//println("new:" + newYPosition + " playY:" + playField[1].getY() + " yb" + currentPiece.getMaxY());
-			if (newYPosition > playField[1].getY() - playField[0].getY()) {
-				float correction = newYPosition - (playField[1].getY() - playField[0].getY()) + blockSize;
+			float heightOffset = currentPiece.getMaxY() - currentPiece.getY();
+			if (newYPosition + heightOffset >= playField[1].getY() - playField[0].getY()) {
+				float correction = newYPosition - (playField[1].getY() - playField[0].getY()) + heightOffset;
 				newYPosition = newYPosition - correction; 
 			}
 			
@@ -768,6 +821,9 @@ public class PlayState implements GameState {
 		} else {
 			// How long is piece from the center?
 			float heightOffset = currentPiece.getMaxY() - currentPiece.getY();
+			
+			
+			score.scoreDrop((int)(playField[1].getY() - currentPiece.getMaxY()));
 			
 			// Nothing below, just drop.  But factor in piece length on Y.
 			currentPiece.setY(playField[1].getY() - playField[0].getY() - heightOffset);

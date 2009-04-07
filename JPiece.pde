@@ -81,8 +81,7 @@ class JPiece extends Piece {
 		super.round(blocks[0]);
 		super.round(blocks[1]);
 		super.round(blocks[2]);
-		super.round(blocks[3]);
-		
+		super.round(blocks[3]);	
 	}
 	
 	// this method is called to test collision without updating position, it's like look-ahead
