@@ -24,12 +24,23 @@ class IPiece extends Piece {
 	}
 	
 	public void setRotation(float angle) {
+		//println("ipiece setRotation");
+		
 		// this just rotates two ways back and forth
 		if(angle >= radians(0.0f) && angle <= radians(90.0f)) {
 			this.rotation = radians(90.0f);
 		} else if (angle >= radians(90.0f) && angle <= radians(180.0f)) {
 			this.rotation = radians(0.0f);
-		}
+		} 
+		
+		/*
+		if(angle >= 0.0f && angle <= 90.0f) {
+			this.rotation = 90.0f;
+		} else if (angle >= 90.0f && angle <= 180.0f) {
+			this.rotation = 0.0f;
+		}*/
+		
+		
 	}
 	
 		
@@ -77,6 +88,7 @@ class IPiece extends Piece {
 		offsetY[1] = cos(rotation + radians(180)) * blockSize;
 		offsetY[2] = cos(rotation + radians(0)) * blockSize;
 		offsetY[3] = cos(rotation + radians(0)) * (blockSize * 2);
+	
 		
 		for (int i=0; i<4; i++) {
 			blocks[i].setX(super.pivotPoint.getX() + offsetX[i]);
@@ -93,7 +105,7 @@ class IPiece extends Piece {
 	
 	// this method is called to test collision without updating position, it's like look-ahead
 	public void testUpdate() {
-		testRotation = rotation + radians(90.0f);
+		testRotation = radians(rotation) + radians(90.0f);
 		
 		testOffsetX[0] = 0;
 		testOffsetX[1] = sin(testRotation + radians(0)) * blockSize;

@@ -24,6 +24,7 @@ class Piece {
 	
 
 	public void setRotation(float angle) {
+		//println("super setRotation");
 		this.rotation = angle;
 	}
 	
@@ -144,7 +145,7 @@ class Piece {
 			
 		// or are we more left?
 		} else {
-			if (pivotPoint.getX() > wallStart) {
+			if (pivotPoint.getX() - blockSize > wallStart) {
 				//println("nowhere close near west wall");
 				return false;
 			} else {

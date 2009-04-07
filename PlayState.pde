@@ -244,17 +244,21 @@ public class PlayState implements GameState {
 
 		image(sidebar, playField[1].getX(), blockSize);
 
-                // draw next piece
-                pushMatrix();
-                translate(playField[1].getX() - (blockSize * 3), blockSize * 2);
-                nextPiece.draw();
-                popMatrix();
+		// draw next piece
+		pushMatrix();
+		translate(playField[1].getX() - (blockSize * 3), blockSize * 2);
+		nextPiece.draw();
+		popMatrix();
 
-
-		
-		fill(255);
-		textFont(smallFont,8);
-		text("fps: " + Math.round(fps * .1)/.1,8,8);
+		if (fpsEnabled) {
+			fill(255);
+			textFont(smallFont,8);
+			text("fps: " + Math.round(fps * .1)/.1,8,8);
+		}
+	}
+	
+	public PImage shot() {
+		return get();
 	}
 
 	public GameState nextState() {
@@ -262,11 +266,14 @@ public class PlayState implements GameState {
 			inMenu = false;
 			MenuState menuState = new MenuState();
 			menuState.setNextState(this);
+			menuState.setScreenshot(this);
 			return menuState;
 		}
 
 	    if (gameOver == true) {
-			return new GameOverState();
+			GameOverState gameOverState = new GameOverState();
+			gameOverState.setScreenshot(this);
+			return gameOverState;
 	    }
 	    else{
 	    	return this;
@@ -278,7 +285,7 @@ public class PlayState implements GameState {
 	public void keyPressed() {
 		
 		// left arrow key
-		if (keyCode == LEFT) {
+		if (keyCode == controlLeft) {
 			if (! gridCollideX(currentPiece.getBlocks(), -1)) {
 				currentPiece.setX(currentPiece.getX() - blockSize, playField[0].getX());				
 			}
@@ -335,7 +342,7 @@ public class PlayState implements GameState {
 		}
 		
 		// space bar
-		if (keyCode == ' ') {
+		if (keyCode == controlDrop) {
 			dropPiece();
 		}
 		
@@ -661,9 +668,10 @@ public class PlayState implements GameState {
 		sidebar.fill(0);
 		sidebar.rect(blockSize, playField[0].getY(), blockSize * 5, blockSize * 5);
 		sidebar.rect(blockSize, 0, blockSize * 5, blockSize);
-		sidebar.textFont(crackedFont, 20);
+		sidebar.textFont(visitorFont, 20);
 		sidebar.fill(255);
-		sidebar.text("NEXT", (blockSize * 5) / 2 + blockSize - (textWidth("NEXT") / 2), playField[0].getY());
+		// hardcode 18 as textWidth because of weird bug when starting a new game
+		sidebar.text("NEXT", (blockSize * 3) - 18, playField[0].getY() - 2);
 		sidebar.endDraw();
 		
 	}
