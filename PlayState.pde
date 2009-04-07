@@ -20,6 +20,7 @@ public class PlayState implements GameState {
 	Score score = new Score();
 	Level level = new Level();
 	float currentTimer = level.getTimer();
+	ArrayList anim = new ArrayList();
 	
 	public PlayState() {
 		gameOver = false;
@@ -39,8 +40,8 @@ public class PlayState implements GameState {
 		
 		pieceBag = new PieceBag(playField[1].getX()/2, 32.0f);
 		//currentPiece = new ZPiece(playField[1].getX()/2, 32.0f);
-		//currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
-		currentPiece = pieceBag.getPiece();
+		currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
+		//currentPiece = pieceBag.getPiece();
 		nextPiece = pieceBag.getPiece();
 		
 		deadGrid = new Block[gridSizeX][gridSizeY];
@@ -96,25 +97,25 @@ public class PlayState implements GameState {
 		}*/
 
 		// 3 LINE TEST
-		/*
+		
 		int tmp = 28;
-		for (int i=0; i < 15; i++) {
+		for (int i=0; i < 11; i++) {
 			if (i != 8){
 				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
 			}
 		}
 		tmp--;
-		for (int i=0; i < 15; i++) {
+		for (int i=0; i < 11; i++) {
 			if (i != 8){
 				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
 			}
 		}
 		tmp--;
-		for (int i=0; i < 15; i++) {
+		for (int i=0; i < 11; i++) {
 			if (i != 8){
 				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
 			}
-		}*/
+		}
 		
 		// BUMPY ROTATE GRID TEST
 		/*
@@ -220,6 +221,22 @@ public class PlayState implements GameState {
 			timer = currentTimer;
 			
 		}
+		
+		// animation & effects
+		for (int i=0; i < anim.size(); i++) {
+			Animation a = (Animation)anim.get(i);
+			if (!a.isStarted()) {
+				a.start();
+			} else {
+				a.update(elapsed);
+			}
+			if (a.isDone()) {
+				a.stop();
+				anim.remove(i);
+			}
+		}
+		
+		
 	}
 	
 	// order of drawing in paint() is important
@@ -246,10 +263,10 @@ public class PlayState implements GameState {
 		nextPiece.draw();
 		popMatrix();
 		
+		// score text
 		fill(255);
 		int theScore = score.getScore();
 		int scoreWidth = new Integer(theScore).toString().length();		// need this to make alignment pretty
-
 		if (scoreWidth > 2) {
 			textFont(visitorFont, 64/(scoreWidth * .45));	// number grows, scale down for pretty display
 		} else {
@@ -257,6 +274,7 @@ public class PlayState implements GameState {
 		}
 		text(theScore, playField[1].getX() + blockSize * 2 - scoreWidth, playField[0].getY() + blockSize * 11);
 		
+		// lines done text
 		int theLines = score.getLines();
 		int linesWidth = new Integer(theLines).toString().length();		// need this to make alignment pretty
 
@@ -267,8 +285,16 @@ public class PlayState implements GameState {
 		}
 		text(theLines, playField[1].getX() + blockSize * 2 - linesWidth, playField[0].getY() + blockSize * 16);
 		
+		// level text
 		text(level.getLevel(), playField[1].getX() + blockSize * 2 - linesWidth, playField[0].getY() + blockSize * 21);
 
+		// animation & effects
+		for (int i=0; i < anim.size(); i++) {
+			Animation a = (Animation)anim.get(i);
+			a.draw();
+		}
+
+		// optional fps display
 		if (fpsEnabled) {
 			fill(255);
 			textFont(smallFont,8);
@@ -407,7 +433,7 @@ public class PlayState implements GameState {
 		// mark filled rows (tetrises) into doneRows ArrayList
 		// loop through 2 dimensional array without knowing length
 		ArrayList doneRows = new ArrayList();
-                ArrayList nonEmptyRows = new ArrayList();
+        ArrayList nonEmptyRows = new ArrayList();
 		int rows = deadGrid[0].length;
 		int cols = deadGrid.length;
 
@@ -420,7 +446,6 @@ public class PlayState implements GameState {
 					done++;
 				}
 				//println("done checking col:" + i + " row:" + j + " was:" + done);
-				
 				//println(deadGrid[15][29].getFillColor());
 				if (done == cols) {
 					// doneRows contains markers to done rows that need to be deleted
@@ -436,6 +461,17 @@ public class PlayState implements GameState {
 			score.scoreLines(doneRows.size());
 			level.update(score.getLines());
 			currentTimer = level.getTimer();
+			
+			// temp effects for test
+			int x = (int)playField[0].getX();								// x start of row flash animation
+			int w = (int)playField[1].getX() - (int)playField[0].getX();	// width of row flash animation
+			int h = (int)blockSize;											// height of row flash animation
+			for (int i=0; i < doneRows.size(); i++) {
+				int row = (Integer)doneRows.get(i);
+				int y = row * (int)blockSize + (int)playField[0].getY();	// y start of row flash animation
+				anim.add(new RowAnimation(tatris, x, y, w, h, row));	
+			}
+
 
 			// copy rows to new array, skipping rows that are done
 			Block trimmedGrid[][] = new Block[gridSizeX][gridSizeY];
@@ -800,8 +836,9 @@ public class PlayState implements GameState {
 			// new Y pos is current pos minus offset plus closest distance of hit block
 			float newYPosition = currentPiece.getY() - playField[0].getY() + closest;
 			
+			// give points for dropping piece
 			score.scoreDrop((int)closest);
-			
+					
 			// the piece might go through the floor even if we checked grid collide, check it again
 			//println("new:" + newYPosition + " playY:" + playField[1].getY() + " yb" + currentPiece.getMaxY());
 			float heightOffset = currentPiece.getMaxY() - currentPiece.getY();
@@ -822,8 +859,7 @@ public class PlayState implements GameState {
 			// How long is piece from the center?
 			float heightOffset = currentPiece.getMaxY() - currentPiece.getY();
 			
-			
-			score.scoreDrop((int)(playField[1].getY() - currentPiece.getMaxY()));
+			score.scoreDrop((int)(playField[1].getY() - currentPiece.getMaxY()));		
 			
 			// Nothing below, just drop.  But factor in piece length on Y.
 			currentPiece.setY(playField[1].getY() - playField[0].getY() - heightOffset);

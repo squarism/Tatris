@@ -28,6 +28,8 @@ int controlDown = DOWN;
 int controlRotate = KeyEvent.VK_UP;
 int controlDrop = KeyEvent.VK_SPACE;
 
+PApplet tatris;
+
 void setup(){ 
   	//setup game display area, background colour and framerate
   	size(320, 496); 
@@ -39,6 +41,7 @@ void setup(){
 	regFont = loadFont("MyriadPro-Regular-12.vlw");
 	visitorFont = loadFont("VisitorTT1-BRK--48.vlw");
 	textFont(smallFont,8);
+	tatris = this;
 	
 	// start off our game
 	gameState = new PlayState();
