@@ -30,7 +30,7 @@ int controlDrop = KeyEvent.VK_SPACE;
 
 PApplet tatris;
 
-String ver = "v0.3";
+String ver = "v0.3.1";
 
 void setup(){ 
   	//setup game display area, background colour and framerate

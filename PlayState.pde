@@ -1,4 +1,4 @@
-public class PlayState implements GameState {
+ public class PlayState implements GameState {
 	
 	Piece currentPiece;
 	Piece nextPiece;
@@ -22,6 +22,13 @@ public class PlayState implements GameState {
 	Level level = new Level();
 	float currentTimer = level.getTimer();
 	ArrayList anim = new ArrayList();
+	
+	// try out moving key events to update()
+	boolean pressedRotate = false;
+	boolean pressedDown = false;
+	boolean pressedLeft = false;
+	boolean pressedRight = false;
+	boolean pressedDrop = false;
 	
 	public PlayState() {
 		gameOver = false;
@@ -189,13 +196,25 @@ public class PlayState implements GameState {
 		for (int k=0; k<8; k++){
 
 			for (int i=0; i < gridSizeX; i++) {
-				if (i < 5){
+				if (i > 5){
 					deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#44FF44");
 				}
 			}
 			tmp--;
-		}*/
-
+		}
+		*/
+		
+		
+		// reverse side colli test
+		/*
+		int j=11;
+		for (int row=29; row > 22; row--){
+			j--;
+			for (int i=10; i > j; i--) {
+				deadGrid[i][row] = new Block(i*blockSize + playField[0].getX(), row*blockSize + playField[0].getY(), blockSize, "#44FF44");
+			}
+		}
+		*/
 	}
 	
 	public void update(float elapsed) {
@@ -212,16 +231,69 @@ public class PlayState implements GameState {
 			if (! gridCollideY(currentPiece.getBlocks()) && currentPiece.getMaxY() <= playField[1].getY() - blockSize * 2) {
 				// won't hit, move down
 				currentPiece.setY(currentPiece.getY() + blockSize);
-				currentPiece.update();
 			} else {
 				// we hit something, deadgrid it
 				copyToGrid();
 			}
 
-			// TODO: add difficulty timer
+			// currentTimer is dynamic speed based on current level
 			timer = currentTimer;
 			
 		}
+		
+		if (pressedLeft) {
+			pressedLeft = false;
+			
+			if (! gridCollideX(currentPiece.getBlocks(), -1)) {
+				currentPiece.setX(currentPiece.getX() - blockSize, playField[0].getX());
+			}
+		} else if (pressedRight) {
+			pressedRight = false;
+
+			if (! gridCollideX(currentPiece.getBlocks(), 1)) {
+				currentPiece.setX(currentPiece.getX() + blockSize, playField[1].getX());
+			}
+		} else if (pressedRotate) {
+			pressedRotate = false;
+			
+			if (! currentPiece.rotateCollide(deadGrid, playField, gridSizeX, gridSizeY)) {
+				// checks rotation collision with X boundries	
+				if (! currentPiece.rotateCollideX(playField[0].getX(), playField[1].getX())) {
+					// checks rotation collision with Y boundries
+					if (! currentPiece.rotateCollideY(playField[0].getY(), playField[1].getY())) {
+						currentPiece.setRotation(currentPiece.getRotation() + radians(90));
+						// update our piece so not to cause weird bugs with key events
+					}
+				}
+			}
+		} else if (pressedDown) {
+			pressedDown = false;
+			
+			// at bottom of play boundry
+			if (currentPiece.getMaxY() + blockSize < playField[1].getY()) {				
+				// this is down movement from keystroke
+				currentPiece.setY(currentPiece.getY() + blockSize);
+			} else {
+				// but if the player is mashing down at the very bottom, copy piece
+				copyToGrid();
+			}
+			
+			// TODO: add difficulty timer
+			// When player presses down, reset timer to make gameplay more
+			// predictable and smooth.  Pieces can fall "twice" otherwise.
+			// Ordering of timer setting and copyToGrid() checks matter for gameplay feel.
+			timer = 1;
+			
+			// user pressed down, check for grid collide
+			if (gridCollideY(currentPiece.getBlocks())) {
+				//println("collision on grid");
+				copyToGrid();
+			}
+		} else if (pressedDrop) {
+			pressedDrop = false;
+			dropPiece();
+		}
+		
 		
 		// animation & effects
 		for (int i=0; i < anim.size(); i++) {
@@ -236,8 +308,6 @@ public class PlayState implements GameState {
 				anim.remove(i);
 			}
 		}
-		
-		
 	}
 	
 	// order of drawing in paint() is important
@@ -335,64 +405,38 @@ public class PlayState implements GameState {
 		
 		// left arrow key
 		if (keyCode == controlLeft) {
+			pressedLeft = true;
+			/*
 			if (! gridCollideX(currentPiece.getBlocks(), -1)) {
 				currentPiece.setX(currentPiece.getX() - blockSize, playField[0].getX());				
 			}
+			*/
 		}
 
 		// right arrow key
 		if (keyCode == controlRight) {
+			/*
 			if (! gridCollideX(currentPiece.getBlocks(), 1)) {
 				currentPiece.setX(currentPiece.getX() + blockSize, playField[1].getX());
-			}
+			}*/
+			pressedRight = true;
 		}
 
 		// up arrow key
 		if (keyCode == controlRotate) {
 			// checks collision with grid
 			//println("PLAYSTATE THINKS:" + currentPiece.rotateCollide(deadGrid, playField, gridSizeX, gridSizeY));
-			
-			if (! currentPiece.rotateCollide(deadGrid, playField, gridSizeX, gridSizeY)) {
-				// checks rotation collision with X boundries	
-				if (! currentPiece.rotateCollideX(playField[0].getX(), playField[1].getX())) {
-					// checks rotation collision with Y boundries
-					if (! currentPiece.rotateCollideY(playField[0].getY(), playField[1].getY())) {
-						currentPiece.setRotation(currentPiece.getRotation() + radians(90));
-						// update our piece so not to cause weird bugs with key events
-						currentPiece.update();
-					}
-				}
-			} 
+			pressedRotate = true;
 		}
 
 		// down arrow key
 		if (keyCode == controlDown) {
-			// at bottom of play boundry
-			if (currentPiece.getMaxY() + blockSize < playField[1].getY()) {				
-				// this is down movement from keystroke
-				currentPiece.setY(currentPiece.getY() + blockSize);
-			} else {
-				// but if the player is mashing down at the very bottom, copy piece
-				copyToGrid();
-			}
-			
-			// TODO: add difficulty timer
-			// When player presses down, reset timer to make gameplay more
-			// predictable and smooth.  Pieces can fall "twice" otherwise.
-			// Ordering of timer setting and copyToGrid() checks matter for gameplay feel.
-			timer = 1;
-			
-			// user pressed down, check for grid collide
-			if (gridCollideY(currentPiece.getBlocks())) {
-				//println("collision on grid");
-				copyToGrid();
-			}
-			
+			pressedDown = true;
 		}
 		
 		// space bar
 		if (keyCode == controlDrop) {
-			dropPiece();
+			pressedDrop = true;
 		}
 		
 		if (key == ESC) {
@@ -650,6 +694,7 @@ public class PlayState implements GameState {
 		}
 	}
 	
+	/*
 	// check for blocks on X, -1 is left, 1 is right
 	boolean gridCollideX(Block checkBlocks[], int direction) {	
 		//Block copyBlock[] = currentPiece.getBlocks();
@@ -691,7 +736,52 @@ public class PlayState implements GameState {
 
 		return false;
 
+	}*/
+	
+	// check for blocks on X, -1 is left, 1 is right
+	boolean gridCollideX(Block checkBlocks[], int direction) {	
+		//Block copyBlock[] = currentPiece.getBlocks();
+		
+		for (int i=0; i < 4; i++) {
+			Float fx = (checkBlocks[i].getX() - playField[0].getX()) / blockSize;
+			Float fy = (checkBlocks[i].getY() - playField[0].getY()) / blockSize;
+			
+			//println("block" + i + " " + fx * blockSize + " " + fy * blockSize);
+			if (direction > 0) {
+				// piece is going to the right, check to the right
+				int checkIndexX = fx.intValue() + 1;			
+				// limit x to edge of playfield
+				if (checkIndexX < gridSizeX - 1) {
+					int checkIndexY = fy.intValue();
+					// we hit something on the grid
+					if(deadGrid[checkIndexX][checkIndexY] != null) {
+						//System.out.println("deny right");
+						return true;
+					}		
+				}
+				
+			} else {
+				// piece is going to the left, check to the left
+				int checkIndexX = fx.intValue() - 1;
+				// limit x to edge of playfield
+				if (checkIndexX > 0) {
+					int checkIndexY = fy.intValue();
+					//println("testing:" + x + "," + y);
+					// we hit something on the grid
+					if(deadGrid[checkIndexX][checkIndexY] != null) {
+						//System.out.println("deny left");
+						return true;
+					}
+				}
+			}
+			
+		}
+
+		return false;
+
 	}
+	
+	
 		
 	void offscreenBuffers() {
 		

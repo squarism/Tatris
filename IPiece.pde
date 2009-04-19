@@ -33,14 +33,6 @@ class IPiece extends Piece {
 			this.rotation = radians(0.0f);
 		} 
 		
-		/*
-		if(angle >= 0.0f && angle <= 90.0f) {
-			this.rotation = 90.0f;
-		} else if (angle >= 90.0f && angle <= 180.0f) {
-			this.rotation = 0.0f;
-		}*/
-		
-		
 	}
 	
 		

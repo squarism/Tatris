@@ -26,6 +26,7 @@ class Piece {
 	public void setRotation(float angle) {
 		//println("super setRotation");
 		this.rotation = angle;
+		update();
 	}
 	
 	public void draw() {
@@ -110,7 +111,7 @@ class Piece {
 				}
 			}
 		}
-		// println("nearGrid thinks false");
+		//println("nearGrid thinks false");
 		return false;
 	}
 	
@@ -220,7 +221,7 @@ class Piece {
 			//println("PIECE TESTOFFSET:" + testOffsetX[i]);
 			
 			// make sure we don't test past our bounds
-			if (testX < gridSizeX && testY < gridSizeY) {		
+			if (testX < gridSizeX && testY < gridSizeY && testX >= 0 && testY >= 0) {
 				// if deadGrid isn't null then some block is there
 				if (deadGrid[testX][testY] != null) {
 					// TODO: take out hit?
