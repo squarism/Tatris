@@ -114,7 +114,7 @@ public class MenuState implements GameState {
 		//rectMode(CENTER);
 		//println("W:" + width + "Y:" +  (144 + (focusY*48)) + "T:" + textWidth(mainMenu[focusY]) );
 		strokeWeight(2);
-		rect(width/2 - (textWidth(currentMenu[focusY]) / 2) - 50, 144 + (focusY*fontSize) - (fontSize/2) - 2, textWidth(currentMenu[focusY])+100, fontSize - 16);
+		rect(15, 144 + (focusY*fontSize) - (fontSize/2) - 2, width-35, fontSize - 16);
 
 		if (waitingForKey) {
 			textFont(visitorFont, fontSize/2);
