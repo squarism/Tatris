@@ -105,8 +105,8 @@ public class MenuState implements GameState {
 		//textFont(crackedFont, fontSize);
 		textFont(visitorFont, fontSize);
 		textCentered("TATRIS", fontSize, 255, 0);	// badge
-		textFont(regFont, 12);
-		text(ver, width*9/13, height/8);			// place the version just to the right of the badge
+		textFont(visitorFont, 12);
+		text(ver, width*10/15, height/8);			// place the version just to the right of the badge
 		fill(255,255,255);
 		
 		stroke(255);

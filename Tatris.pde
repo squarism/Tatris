@@ -30,7 +30,7 @@ int controlDrop = KeyEvent.VK_SPACE;
 
 PApplet tatris;
 
-String ver = "v0.3.1";
+String ver = "v0.4.0";
 
 void setup(){ 
   	//setup game display area, background colour and framerate
@@ -38,10 +38,17 @@ void setup(){
   	frameRate(60);
   	fill(0); 
 	noSmooth();
-	smallFont = loadFont("04b-08-8.vlw");
-	crackedFont = loadFont("Cracked-48.vlw");
-	regFont = loadFont("MyriadPro-Regular-12.vlw");
-	visitorFont = loadFont("VisitorTT1-BRK--48.vlw");
+	
+	// TODO: loadFont failing after Processing upgrade (font not found in data directory)
+	//smallFont = loadFont("04b-08-8.vlw");
+	smallFont = createFont("04b-08-8", 8);
+	//crackedFont = loadFont("Cracked-48.vlw");
+	crackedFont = createFont("Cracked", 48);
+	//regFont = loadFont("MyriadPro-Regular-12.vlw");
+	regFont = createFont("MyriadPro-Regular", 12);
+	//visitorFont = loadFont("VisitorTT1-BRK--48.vlw");
+	visitorFont = createFont("VisitorTT1-BRK-", 48);
+	
 	textFont(smallFont,8);
 	tatris = this;
 	
