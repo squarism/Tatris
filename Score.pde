@@ -14,13 +14,25 @@ public class Score {
 	}
 	
 	public void scoreLines(int lines) {
-		// println("scoreLine():" + lines);
+		println("scoreLine():" + lines);
 		this.lines += lines;
 		switch(lines) {
-			case 4: score += LINEVALUE * 1.4 * lines; break;
-			case 3: score += LINEVALUE * 1.3 * lines; break;
-			case 2: score += LINEVALUE * 1.2 * lines; break;
-			case 1: score += LINEVALUE; break;
+			case 4: 
+				score += LINEVALUE * 1.4 * lines; 
+				if (soundEnabled) line4Fx.trigger();
+				break;
+			case 3: 
+				score += LINEVALUE * 1.3 * lines; 
+				if (soundEnabled) line3Fx.trigger();
+				break;
+			case 2: 
+				score += LINEVALUE * 1.2 * lines; 
+				if (soundEnabled) line2Fx.trigger(); 
+				break;
+			case 1: 
+				score += LINEVALUE; 
+				if (soundEnabled) line1Fx.trigger(); 
+				break;
 		}		
 	}
 	

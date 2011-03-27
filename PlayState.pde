@@ -63,158 +63,8 @@
 		// create offscreen grid buffer image
 		offscreenBuffers();
 		
-		// TWO LINE TEST
-		/*
-		int tmp = 28;
-		for (int i=0; i < 15; i++) {
-			deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-		}
-		tmp--;
-		for (int i=0; i < 15; i++) {
-			deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-		}*/
-
-		// ONE LINE TEST
-		/*
-		int tmp = 28;
-		for (int i=0; i < 15; i++) {
-			if (i != 7 && i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}
-		tmp--;
-		for (int i=0; i < 15; i++) {
-			if (i != 7 && i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}*/
-		
-		// TWO LINE TEST
-		/*
-		int tmp = 28;
-		for (int i=0; i < 15; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}
-		tmp--;
-		for (int i=0; i < 15; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}*/
-
-		// 3 LINE TEST
-		/*
-		int tmp = 28;
-		for (int i=0; i < 11; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}
-		tmp--;
-		for (int i=0; i < 11; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}
-		tmp--;
-		for (int i=0; i < 11; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#444444");
-			}
-		}*/
-		
-		// BUMPY ROTATE GRID TEST
-		/*
-		String bumpy = "#FFAA00";
-		int tmp = 28;
-		for (int i=0; i < 15; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
-			}
-		}
-		tmp--;
-		for (int i=0; i < 15; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
-			}
-		}
-		tmp--;
-		for (int i=5; i < 8; i++) {
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
-		}
-		tmp--;
-		deadGrid[7][tmp] = new Block(7*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, bumpy);
-		*/
-		
-		// SINGLE GODDAMN BLOCK TEST -- THROUGH FLOOR BUG
-		//deadGrid[7][28] = new Block(7*blockSize + playField[0].getX(), 28*blockSize + playField[0].getY(), blockSize, "#FFAA00");
-		
-		/*
-        // 2 done, 1 not, 1 done, 1 not, 1 done TEST
-        int tmp = gridSizeY-1;
-		for (int i=0; i < gridSizeX; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#44FF44");
-			}
-		}
-		tmp--;
-		for (int i=0; i < gridSizeX; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#4444FF");
-			}
-		}
-		tmp--;
-		for (int i=0; i < gridSizeX; i++) {
-			if (i != 8 && i != 7){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#FF4444");
-			}
-		}
-		tmp--;
-		for (int i=0; i < gridSizeX; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#001155");
-			}
-		}
-		tmp--;
-		for (int i=0; i < gridSizeX; i++) {
-			if (i != 8 && i != 7){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#551144");
-			}
-		}
-		tmp--;
-		for (int i=0; i < gridSizeX; i++) {
-			if (i != 8){
-				deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#9966FF");
-			}
-		}*/
-
-        // side colli test
-		/*
-        int tmp = gridSizeY-1;
-		for (int k=0; k<8; k++){
-
-			for (int i=0; i < gridSizeX; i++) {
-				if (i > 5){
-					deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#44FF44");
-				}
-			}
-			tmp--;
-		}
-		*/
-		
-		
-		// reverse side colli test
-		/*
-		int j=11;
-		for (int row=29; row > 22; row--){
-			j--;
-			for (int i=10; i > j; i--) {
-				deadGrid[i][row] = new Block(i*blockSize + playField[0].getX(), row*blockSize + playField[0].getY(), blockSize, "#44FF44");
-			}
-		}
-		*/
+		// populate playfield if you want to test a certain situation, see method for test types
+		//enableTest(10);
 	}
 	
 	public void update(float elapsed) {
@@ -437,11 +287,14 @@
 		// space bar
 		if (keyCode == controlDrop) {
 			pressedDrop = true;
+			// drop piece sound fx
+			if (soundEnabled) dropFx.trigger();
 		}
 		
 		if (key == ESC) {
 			inMenu = true;
 			key = 0;  // Fools! don't let them escape!
+			if (soundEnabled) pauseFx.trigger();
 		}
 	}
 	
@@ -455,6 +308,8 @@
 	it also scans the deadgrid for done rows, this takes many passes.
 	 */
 	void copyToGrid() {
+		if (soundEnabled) downFx.trigger();
+		
 		// get a temp copy of the current piece to test with
 		Block copyBlock[] = currentPiece.getBlocks();
 		
@@ -955,7 +810,7 @@
 			// set x,y of piece minus offset of block
 			currentPiece.setY(newYPosition);
 			currentPiece.update();
-
+			
 			// TODO: why do I have to do this instead of copyToGrid()?
 			//timer = 0;
 			copyToGrid();		
@@ -975,5 +830,174 @@
 			copyToGrid();
 		}
 		
+	}
+	
+	void enableTest(int test) {
+		// starting line number to fill
+		int tmp = 28;
+		String testColor = "#44FF44";
+
+		switch(test) {			
+			// ONE LINE TEST
+			case 1:
+				for (int i=0; i < 11; i++) {
+					if (i != 7){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				break;
+
+			// TWO LINE TEST			
+			case 2:
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				tmp--;
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				break;
+				
+			// 3 LINE TEST
+			case 3:
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				tmp--;
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				tmp--;
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+			
+			
+				break;
+			
+			// ONE LINE, TWO SPACES TO FILL
+			case 5:
+				for (int i=0; i < 11; i++) {
+					if (i != 7 && i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				tmp--;
+				for (int i=0; i < 11; i++) {
+					if (i != 7 && i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				break;
+			
+			// BUMPY ROTATE GRID TEST
+			case 6:
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				tmp--;
+				for (int i=0; i < 11; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				tmp--;
+				for (int i=5; i < 8; i++) {
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+				}
+				tmp--;
+				deadGrid[7][tmp] = new Block(7*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+				break;
+			
+			
+			// SINGLE GODDAMN BLOCK TEST -- THROUGH FLOOR BUG
+			case 7:
+				deadGrid[7][28] = new Block(7*blockSize + playField[0].getX(), 28*blockSize + playField[0].getY(), blockSize, testColor);
+				break;
+			
+			// 2 done, 1 not, 1 done, 1 not, 1 done TEST
+			// white lines should be removed
+			case 8:
+		        tmp = gridSizeY-1;
+				for (int i=0; i < gridSizeX; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#FFFFFF");
+					}
+				}
+				tmp--;
+				for (int i=0; i < gridSizeX; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#FFFFFF");
+					}
+				}
+				tmp--;
+				for (int i=0; i < gridSizeX; i++) {
+					if (i != 8 && i != 7){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#FF1111");
+					}
+				}
+				tmp--;
+				for (int i=0; i < gridSizeX; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#FFFFFF");
+					}
+				}
+				tmp--;
+				for (int i=0; i < gridSizeX; i++) {
+					if (i != 8 && i != 7){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#FF1111");
+					}
+				}
+				tmp--;
+				for (int i=0; i < gridSizeX; i++) {
+					if (i != 8){
+						deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, testColor);
+					}
+				}
+				currentPiece = new IPiece(playField[1].getX()/2, 32.0f);
+				break;
+			
+			// side collision test
+			case 9:
+			 	tmp = gridSizeY-1;
+				for (int k=0; k<8; k++){
+
+					for (int i=0; i < gridSizeX; i++) {
+						if (i > 5){
+							deadGrid[i][tmp] = new Block(i*blockSize + playField[0].getX(), tmp*blockSize + playField[0].getY(), blockSize, "#44FF44");
+						}
+					}
+					tmp--;
+				}
+				break;
+			
+			// reverse side colli test
+			case 10:
+				int j=11;
+				for (int row=29; row > 22; row--){
+					j--;
+					for (int i=10; i > j; i--) {
+						deadGrid[i][row] = new Block(i*blockSize + playField[0].getX(), row*blockSize + playField[0].getY(), blockSize, "#44FF44");
+					}
+				}
+				break;
+			
+			
+		}
+		
+		/*
+		*/
 	}
 }

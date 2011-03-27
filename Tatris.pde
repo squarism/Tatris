@@ -1,5 +1,8 @@
+import ddf.minim.*;
+
 //Block block = new Block(125,215,50,"#2020AA");
 
+// TODO: joystick support.  Implement or kill it.
 //NESJoystick nes;
 
 //ArrayList pieces = new ArrayList();
@@ -17,7 +20,7 @@ PFont crackedFont;	// huge font
 PFont visitorFont;
 
 // Game Options
-boolean soundEnabled = false;
+boolean soundEnabled = true;
 boolean musicEnabled = false;
 boolean fpsEnabled = false;
 
@@ -32,13 +35,25 @@ PApplet tatris;
 
 String ver = "v0.4.0";
 
+// Sound support with Minim
+Minim minim;
+AudioSample dropFx;
+AudioSample downFx;
+AudioSample line1Fx;
+AudioSample line2Fx;
+AudioSample line3Fx;
+AudioSample line4Fx;
+AudioSample okFx;
+AudioSample pauseFx;
+AudioSample unpauseFx;
+
 void setup(){ 
   	//setup game display area, background colour and framerate
   	size(320, 496); 
   	frameRate(60);
   	fill(0); 
 	noSmooth();
-	
+		
 	// TODO: loadFont failing after Processing upgrade (font not found in data directory)
 	//smallFont = loadFont("04b-08-8.vlw");
 	smallFont = createFont("04b-08-8", 8);
@@ -52,6 +67,18 @@ void setup(){
 	textFont(smallFont,8);
 	tatris = this;
 	
+	minim = new Minim(this);
+	dropFx = minim.loadSample("drop.wav", 2048);
+	if ( dropFx == null ) println("Didn't get snare!");
+	downFx = minim.loadSample("down.wav", 2048);
+	pauseFx = minim.loadSample("pause.wav", 2048);
+	unpauseFx = minim.loadSample("unpause.wav", 2048);
+	line1Fx = minim.loadSample("line1.wav", 2048);
+	line2Fx = minim.loadSample("line2.wav", 2048);
+	line3Fx = minim.loadSample("line3.wav", 2048);
+	line4Fx = minim.loadSample("line4.wav", 2048);
+	okFx = minim.loadSample("ok.wav", 2048);
+		
 	// start off our game
 	gameState = new PlayState();
   //nes = new NESJoystick(this);

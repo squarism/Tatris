@@ -42,6 +42,7 @@ public class MenuState implements GameState {
 			}
 		
 			if (keyRight || keyEnter) {
+				if (soundEnabled) okFx.trigger();
 				//println(focusX);
 				keyRight = false;
 				keyEnter = false;
@@ -75,6 +76,7 @@ public class MenuState implements GameState {
 				focusY = 0;
 			}  else if (currentMenu == mainMenu){
 				if (!isNewGame) {
+					if (soundEnabled) unpauseFx.trigger();
 					inMenu = false;
 				}
 			}
