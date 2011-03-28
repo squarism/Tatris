@@ -658,7 +658,7 @@
 		grid.beginDraw();
 		grid.background(0);
 		grid.strokeWeight(1);
-		grid.stroke(10);
+		grid.stroke(20);
 		for (float i=0; i <= gridSizeX; i++) {
 			for (float j=0; j <= gridSizeY; j++) {
 		    	grid.line(i*blockSize, 0, i*blockSize, gridSizeY*blockSize);

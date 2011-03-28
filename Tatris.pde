@@ -33,7 +33,7 @@ int controlDrop = KeyEvent.VK_SPACE;
 
 PApplet tatris;
 
-String ver = "v0.4.0";
+String ver = "v0.4.1";
 
 // Sound support with Minim
 Minim minim;
@@ -55,14 +55,14 @@ void setup(){
 	noSmooth();
 		
 	// TODO: loadFont failing after Processing upgrade (font not found in data directory)
-	//smallFont = loadFont("04b-08-8.vlw");
-	smallFont = createFont("04b-08-8", 8);
-	//crackedFont = loadFont("Cracked-48.vlw");
-	crackedFont = createFont("Cracked", 48);
-	//regFont = loadFont("MyriadPro-Regular-12.vlw");
-	regFont = createFont("MyriadPro-Regular", 12);
-	//visitorFont = loadFont("VisitorTT1-BRK--48.vlw");
-	visitorFont = createFont("VisitorTT1-BRK-", 48);
+	smallFont = loadFont("04b-08-8.vlw");
+	//smallFont = createFont("04b-08-8", 8);
+	crackedFont = loadFont("Cracked-48.vlw");
+	//crackedFont = createFont("Cracked", 48);
+	regFont = loadFont("MyriadPro-Regular-12.vlw");
+	//regFont = createFont("MyriadPro-Regular", 12);
+	visitorFont = loadFont("VisitorTT1-BRK--48.vlw");
+	//visitorFont = createFont("VisitorTT1-BRK-", 48);
 	
 	textFont(smallFont,8);
 	tatris = this;
@@ -230,16 +230,10 @@ private static String getKeyText(int code) {
 /**
 
 * Call the PApplet main method.
-
-*/
-
-
+*	only from Eclipse for debugging!
 
 public static void main( String[] args ) {
 	System.out.println( "\nOpenCV meet Processing PApplet\n" );
 	PApplet.main( new String[]{"Tatris"} );
 }
-
-
-
-
+*/
