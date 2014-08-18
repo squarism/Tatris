@@ -18,7 +18,7 @@ Default controls:
 
 [See it in action.](http://squarism.com/tatris/)
 
-[A post about how this was made.](http://squarism.com/2009/06/22/making-tetris/)
+[A post about how this was made.](http://squarism.com/2009/06/22/making-tatris/)
 
 TODO:
 
