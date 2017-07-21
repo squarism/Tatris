@@ -29,7 +29,7 @@ public class GameOverState implements GameState {
 	
 	public void setScreenshot(GameState nextState) {
 		PImage shot = ((PlayState)nextState).shot();
-		gameScreen = createGraphics(width, height, P2D);
+		gameScreen = createGraphics(width, height, JAVA2D);
 		gameScreen.beginDraw();
 		gameScreen.tint(#FFFFFF, 40);	// darken a bit
 		gameScreen.image(shot, 0, 0);	// our screenshot of play state
@@ -55,4 +55,3 @@ public class GameOverState implements GameState {
 
 	}
 }
-

@@ -23,8 +23,8 @@ public class RowAnimation extends Animation implements Runnable {
 	float elapsed;
 
 	public RowAnimation(PApplet parent, int x, int y, int w, int h, int id) { 
-		parent.registerDispose(this);
-		//println("row animation constructor");
+		// parent.registerDispose(this);
+		// println("row animation constructor");
 
 		this.level = 150;
 		this.levelBase = this.level;
@@ -101,4 +101,3 @@ public class RowAnimation extends Animation implements Runnable {
 		stop(); 
 	} 
 }
-

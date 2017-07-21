@@ -1,4 +1,5 @@
 import ddf.minim.*;
+import java.awt.event.KeyEvent;
 
 //Block block = new Block(125,215,50,"#2020AA");
 
@@ -47,12 +48,16 @@ AudioSample okFx;
 AudioSample pauseFx;
 AudioSample unpauseFx;
 
+void settings() {
+  size(320, 496);
+  noSmooth();
+}
+
 void setup(){ 
   	//setup game display area, background colour and framerate
-  	size(320, 496); 
-  	frameRate(60);
-  	fill(0); 
-	noSmooth();
+  fill(0); 
+  frameRate(60);
+  
 		
 	// TODO: loadFont failing after Processing upgrade (font not found in data directory)
 	smallFont = loadFont("04b-08-8.vlw");

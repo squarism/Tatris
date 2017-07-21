@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.Iterator;
 
 // blocks move together as one set of blocks, offset by shape pattern
 class Piece {

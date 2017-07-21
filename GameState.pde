@@ -6,4 +6,3 @@ public interface GameState {
 	public void keyReleased();
 	public PImage shot();
 }
-

@@ -1,3 +1,7 @@
+ import java.util.TreeMap;
+ import java.util.Collections;
+ import java.util.Map;
+ 
  public class PlayState implements GameState {
 	
 	Piece currentPiece;
@@ -434,7 +438,7 @@
 			// 26, 27, 28 are done.  25 gets +1, +1, +1 = 3.  Row 25 needs to move down 3 lines.
 
 			// use TreeMap because it's a sorted HashMap, sort in reverse (rows restack bottom to top)
-			TreeMap needToFall = new TreeMap(new ReverseComparator());
+			TreeMap needToFall = new TreeMap(Collections.reverseOrder());
 
 			// loop through non empty rows
 			int nonEmptyRowNum;
@@ -643,7 +647,7 @@
 		// border box around playfield, +3 is for interior padding border
 		int xlen = (int)(playField[1].getX() - playField[0].getX()) + 3;
 		int ylen = (int)(playField[1].getY() - playField[0].getY()) + 3;
-		overlay = createGraphics( xlen + 3, ylen + 3, P2D);
+		overlay = createGraphics( xlen + 3, ylen + 3, JAVA2D);
 		overlay.beginDraw();
 		overlay.strokeWeight(1);
   		overlay.stroke(255);
@@ -654,7 +658,7 @@
 		overlay.endDraw();
 		
 		// grid lines on playfield
-		grid = createGraphics( (int)(gridSizeX * blockSize) + 1, (int)(gridSizeY * blockSize) + 1, P2D);
+		grid = createGraphics( (int)(gridSizeX * blockSize) + 1, (int)(gridSizeY * blockSize) + 1, JAVA2D);
 		grid.beginDraw();
 		grid.background(0);
 		grid.strokeWeight(1);
@@ -669,7 +673,7 @@
 		
 		xlen = (int)(width - playField[1].getX());
 		ylen = (int)(playField[1].getY());
-		sidebar = createGraphics(xlen, ylen, P2D);
+		sidebar = createGraphics(xlen, ylen, JAVA2D);
 		sidebar.beginDraw();
 
 		// next box
@@ -710,7 +714,7 @@
 		sidebar.endDraw();
 
 		// badge
-		badge = createGraphics(300, 48, P2D);
+		badge = createGraphics(300, 48, JAVA2D);
 		badge.beginDraw();		
 		// badge.background(0, 0);
 		// badge.fill(255,255,255,120);
